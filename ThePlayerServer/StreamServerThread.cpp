@@ -153,8 +153,8 @@ bool StreamServerThread::sendBinaryFile(std::string path) {
         }
         file.close();
     } else {
-        return false;
         std::cout << "Unable to open file";
+        return false;
     }
     dataMessage.type = MESSAGE_DATA_FINISHED;
     sprintf(dataMessage.data, "%s", "0");
