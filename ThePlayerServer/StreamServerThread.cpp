@@ -140,27 +140,25 @@ bool StreamServerThread::sendBinaryFile(std::string path) {
     std::ifstream file(path.c_str(), std::ios::in | std::ios::binary);
     Message dataMessage;
     if (file.is_open()) {
-        int pieceId = 0;
-        while (!file.eof()) {
-            dataMessage.dataSize = BUFFSIZE;
-            dataMessage.type = MESSAGE_DATA;
+        dataMessage.dataSize = BUFFSIZE;
+        dataMessage.type = MESSAGE_DATA;
+        for (int pieceId = 0; !file.eof(); ++pieceId) {
             file.read(dataMessage.data, BUFFSIZE);
             sendMessage(&dataMessage);
             printf("PieceId: %d\n", pieceId);
             //printf("%s\n", dataMessage.data); 
-            usleep(100000);
-            pieceId++;
+            usleep(10000);
         }
         file.close();
     } else {
-        std::cout << "Unable to open file";
+        Logger::getInstance()->log(m_iSocketId, "UNABLE TO OPEN FILE", LOG_LEVEL_FATAL);
         return false;
     }
     dataMessage.type = MESSAGE_DATA_FINISHED;
     sprintf(dataMessage.data, "%s", "0");
     dataMessage.dataSize = 0;
     sendMessage(&dataMessage);
-    std::cout << "FINISHED" << std::endl;
+    Logger::getInstance()->log(m_iSocketId, "SEND MEDIA FINISHED", LOG_LEVEL_INFO);
     return true;
 }
 

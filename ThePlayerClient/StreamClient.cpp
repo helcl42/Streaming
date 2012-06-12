@@ -160,10 +160,9 @@ bool StreamClient::downloadMedia(int id) {
  * with accepting MESSAEGE_DATA_FINISH message
  */
 bool StreamClient::saveBinaryFile(std::string path) {
-    std::fstream file(path.c_str(), std::ios::out | std::ios::binary);
-    int pieceId = 0;
+    std::fstream file(path.c_str(), std::ios::out | std::ios::binary);    
     Message* recvMessage = NULL;
-    do {
+    for(int pieceId = 0; ; ++pieceId) {  
         recvMessage = receiveMessage();
         if (recvMessage->type == MESSAGE_DATA_FINISHED) {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD FINISHED SUCCESFULLY", LOG_LEVEL_INFO);
@@ -175,13 +174,11 @@ bool StreamClient::saveBinaryFile(std::string path) {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "INVALID MESSAGE TYPE OR SIZE -> WHILE DOWNLOADING MEDIA.", LOG_LEVEL_ERROR);
             return false;
         }
-        file.write(recvMessage->data, BUFFSIZE);
-        pieceId++;
+        file.write(recvMessage->data, BUFFSIZE);        
         printf("PieceId: %d\n", pieceId);
         //printf("%s\n", recvMessage->data);
-        SAFE_DELETE(recvMessage);
-    } while (true);
-
+        SAFE_DELETE(recvMessage);       
+    }
     Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD WAS NOT FINISHED CORRECTLY", LOG_LEVEL_ERROR);
     return false;
 }
