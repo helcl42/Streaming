@@ -39,6 +39,8 @@ public:
     void sendMessage(Message* message);
     
     bool sendBinaryFile(std::string path);
+    ///???
+    Song* getSong(int songId);
 
     int getId() const;
     int getSocketId() const;

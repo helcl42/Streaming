@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 class Artist;
 class Album;
@@ -29,7 +30,7 @@ public:
     Song() {
     }
 
-    Song(int id, std::string title, unsigned int length, std::string url, Album * album) : m_id(id), m_title(title),
+    Song(int id, std::string title, unsigned int length, std::string url, Album * album = NULL) : m_id(id), m_title(title),
     m_length(length), m_url(url), m_album(album) {
     }
 
@@ -43,21 +44,54 @@ public:
         return m_id;
     }
 
+    void setId(int id) {
+        m_id = id;
+    }
+
     std::string getTitle() {
         return m_title;
+    }
+
+    void setTitle(std::string title) {
+        m_title = title;
     }
 
     unsigned int getLength() {
         return m_length;
     }
 
+    void setLength(unsigned int len) {
+        m_length = len;
+    }
+
     std::string getUrl() {
         return m_url;
+    }
+
+    void setUrl(std::string url) {
+        m_url = url;
     }
 
     Album * getAlbum() {
         return m_album;
     }
+
+    void setAlbum(Album* album) {
+        m_album = album;
+    }
+
+    std::string getAsString() {
+        std::stringstream ss;
+        ss << m_id;
+        ss << ":";
+        ss << m_title;
+        ss << ":";
+        ss << m_length;
+        ss << ":";
+        ss << m_url;
+        return ss.str();
+    }
+
 
 };
 

@@ -99,11 +99,10 @@ void StreamServerThread::ThreadProcedure() {
             {
                 Logger::getInstance()->log(m_iSocketId, "CONNECT MESSAGE RECEIVED", LOG_LEVEL_INFO);
                 Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);
-
                 Message initMessage;
                 initMessage.type = MESSAGE_CONNECT;
                 sprintf(initMessage.data, "%d", m_iId);
-                sendMessage(&initMessage);
+                sendMessage(&initMessage);                
                 break;
             }
             case MESSAGE_DOWNLOAD:
@@ -111,29 +110,47 @@ void StreamServerThread::ThreadProcedure() {
                 Logger::getInstance()->log(m_iSocketId, "MESSAGE DOWNLOAD RECEIVED", LOG_LEVEL_INFO);
                 Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);
                 int songId = atoi(message->data);
-
-                //query do db, ktera mi vrati celej objekt Song
-                Song* song = new Song(songId, "NAME", 200, "/home/lubos/Documents/Projects/karel/", NULL);
-                int songSize = sizeof (Song);
-
-                Message mediaMessage;
-                mediaMessage.type = MESSAGE_DOWNLOAD;
-                // mediaMessage.dataSize = songSize;
-                //memcpy(mediaMessage.data, static_cast<void*> (song), songSize);
-                sendMessage(&mediaMessage);
-                //sendBinaryFile("Led_Zeppelin_04_No_Quarter.flac");
-                sendBinaryFile("Mana_Nothing_particular.ogg");
-                //sendBinaryFile("09-koop-drum_rhythm_a.mp3");
-                //sendBinaryFile("21.-Koop---Whenever-There-Is-You.mp3");
+                if (songId > 0) {
+                    Song* song = getSong(songId);
+                    if (song != NULL) {
+                        std::string songString = song->getAsString();
+                        int songSize = strlen(songString.c_str());
+                        Message mediaMessage;
+                        memcpy(mediaMessage.data, songString.c_str(), songSize);
+                        mediaMessage.dataSize = songSize;
+                        mediaMessage.type = MESSAGE_DOWNLOAD;
+                        sendMessage(&mediaMessage);
+                        sendBinaryFile(song->getUrl());
+                        SAFE_DELETE(song);
+                    } else {
+                        Logger::getInstance()->log(m_iSocketId, "NON-INITIALIZED SONG OBJECT", LOG_LEVEL_INFO);
+                    }
+                } else {
+                    Logger::getInstance()->log(m_iSocketId, "IVALID SONG ID", LOG_LEVEL_ERROR);
+                }                
+                break;
+            }
+            case MESSAGE_QUERY:
+            {
+                Logger::getInstance()->log(m_iSocketId, "MESSAGE QUERY RECEIVED", LOG_LEVEL_INFO);
+                Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);
+                //call library to query message->data identifier
                 break;
             }
             default:
                 Logger::getInstance()->log(m_iSocketId, "UNKNOWN MESSAGE RECEIVED", LOG_LEVEL_FATAL);
                 break;
         }
+        SAFE_DELETE(message);
         cnt++;
         delete message;
     }
+}
+
+Song* StreamServerThread::getSong(int songId) {
+    //query library here
+    Song* song = new Song(songId, "07-no-quarter-led-zeppelin-2006-flac", 200, "07-no-quarter-led-zeppelin-2006-flac", NULL);
+    return song;
 }
 
 bool StreamServerThread::sendBinaryFile(std::string path) {

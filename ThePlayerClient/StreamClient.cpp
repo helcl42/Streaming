@@ -1,5 +1,11 @@
 #include "StreamClient.h"
 
+/**
+ * 
+ * @param hostname
+ * @param port
+ * Constructor
+ */
 StreamClient::StreamClient(char* hostname, int port) {
     m_pClientSocket = new TCPClientSocket(hostname, port);
     if (!m_pClientSocket) {
@@ -8,10 +14,19 @@ StreamClient::StreamClient(char* hostname, int port) {
     }
 }
 
+/**
+ * Destructor
+ */
 StreamClient::~StreamClient() {
     SAFE_DELETE(m_pClientSocket);
 };
 
+/**
+ * 
+ * @param buffer
+ * @param dataLength
+ * function sends raw char* string of senconds parameters length
+ */
 void StreamClient::sendRawData(char* buffer, int dataLength) {
     int sendDataLength = 0;
 
@@ -24,6 +39,11 @@ void StreamClient::sendRawData(char* buffer, int dataLength) {
     } while (sendDataLength < dataLength);
 }
 
+/**
+ * @return char*
+ * function return raw char* string
+ * received from server
+ */
 char* StreamClient::receiveRawData() {
     char tmpBuffer[BUFFSIZE];
     char tmpByte;
@@ -58,8 +78,12 @@ char* StreamClient::receiveRawData() {
     return message;
 }
 
+/**
+ * 
+ * @param message
+ * function sends Message object to server
+ */
 void StreamClient::sendMessage(Message* message) {
-
     int sendDataLength = 0;
     int dataLength = sizeof (Message);
     void* data = static_cast<void*> (message);
@@ -74,6 +98,11 @@ void StreamClient::sendMessage(Message* message) {
     }
 }
 
+/** 
+ * @return Message*
+ * function returns recieved messsage 
+ * object from server
+ */
 Message* StreamClient::receiveMessage() {
     int partSize = 0;
     int dataLength = sizeof (Message);
@@ -97,33 +126,29 @@ bool StreamClient::connectToServer() {
     message->dataSize = 0;
     sendMessage(message);
     SAFE_DELETE(message);
-    
-    message = receiveMessage();
-    switch (message->type) {
-        case MESSAGE_CONNECT:
-            Logger::getInstance()->log(m_pClientSocket->getSocketId(), "CONNECT MESSAGE RECIEVED", LOG_LEVEL_INFO);
-            Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
-            setId(atoi(message->data));
-            setConnected(true);
-            SAFE_DELETE(message);
-            return true;
 
-        default:
-            Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED in connect to server.", LOG_LEVEL_FATAL);
-            SAFE_DELETE(message);
-            return false;
+    message = receiveMessage();
+    if (message->type == MESSAGE_CONNECT) {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "CONNECT MESSAGE RECIEVED", LOG_LEVEL_INFO);
+        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
+        setId(atoi(message->data));
+        setConnected(true);
+        SAFE_DELETE(message);
+        return true;
+    } else {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED in connect to server.", LOG_LEVEL_FATAL);
+        SAFE_DELETE(message);
+        return false;
     }
 }
 
 /**
- * 
  * @param id
  * @return bool
  * function to download media from server
  * returns true if download was successfull
  */
 bool StreamClient::downloadMedia(int id) {
-    //request media to download
     Message* message = new Message();
     message->type = MESSAGE_DOWNLOAD;
     sprintf(message->data, "%d", id);
@@ -132,37 +157,45 @@ bool StreamClient::downloadMedia(int id) {
     SAFE_DELETE(message);
 
     message = receiveMessage();
-
-    switch (message->type) {
-        case MESSAGE_DOWNLOAD:
-            Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD MESSAGE RECIEVED", LOG_LEVEL_INFO);
-            Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
-            //Song* song = static_cast<Song*> (static_cast<void*> (message.data));            
-            //saveBinaryFile("Led_Zeppelin_04_No_Quarter.flac");
-            saveBinaryFile("Mana_Nothing_particular.ogg");
-            //saveBinaryFile("09-koop-drum_rhythm_a.mp3");
-            //saveBinaryFile("21.-Koop---Whenever-There-Is-You.mp3");
-            SAFE_DELETE(message);
-            return true;
-
-        default:
-            Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED in download media.", LOG_LEVEL_FATAL);
-            SAFE_DELETE(message);
-            return false;
+    if (message->type == MESSAGE_DOWNLOAD) {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD MESSAGE RECIEVED", LOG_LEVEL_INFO);
+        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
+        Song* song = getSongFromString(std::string(message->data));
+        saveBinaryFile(song->getTitle());
+        SAFE_DELETE(message);
+        return true;
+    } else {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED in download media.", LOG_LEVEL_FATAL);
+        SAFE_DELETE(message);
+        return false;
     }
 }
 
-/**
- * 
+/** 
+ * @param songString
+ * @return Song*
+ * function returns Song object pointer from object string
+ */
+Song* StreamClient::getSongFromString(std::string songString) {
+    Song* song = new Song();
+    std::vector<std::string> strs = Util::split(songString, ':');
+    song->setId(atoi(strs[0].c_str()));
+    song->setTitle(strs[1]);
+    song->setLength(atoi(strs[2].c_str()));
+    song->setUrl(strs[3]);
+    return song;
+}
+
+/** 
  * @param string path
  * @return bool
  * returns true, if save of file was correct
  * with accepting MESSAEGE_DATA_FINISH message
  */
 bool StreamClient::saveBinaryFile(std::string path) {
-    std::fstream file(path.c_str(), std::ios::out | std::ios::binary);    
+    std::fstream file(path.c_str(), std::ios::out | std::ios::binary);
     Message* recvMessage = NULL;
-    for(int pieceId = 0; ; ++pieceId) {  
+    for (int pieceId = 0;; ++pieceId) {
         recvMessage = receiveMessage();
         if (recvMessage->type == MESSAGE_DATA_FINISHED) {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD FINISHED SUCCESFULLY", LOG_LEVEL_INFO);
@@ -174,13 +207,40 @@ bool StreamClient::saveBinaryFile(std::string path) {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "INVALID MESSAGE TYPE OR SIZE -> WHILE DOWNLOADING MEDIA.", LOG_LEVEL_ERROR);
             return false;
         }
-        file.write(recvMessage->data, BUFFSIZE);        
+        file.write(recvMessage->data, BUFFSIZE);
         printf("PieceId: %d\n", pieceId);
         //printf("%s\n", recvMessage->data);
-        SAFE_DELETE(recvMessage);       
+        SAFE_DELETE(recvMessage);
     }
     Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD WAS NOT FINISHED CORRECTLY", LOG_LEVEL_ERROR);
     return false;
+}
+
+/**
+ * @param name
+ * @return true if query message sequence is correct
+ * and player apdates while library list
+ */
+bool StreamClient::queryLibrary(std::string name) {
+    Message* message = new Message();
+    message->type = MESSAGE_QUERY;
+    sprintf(message->data, "%s", name.c_str());
+    message->dataSize = strlen(name.c_str());
+    sendMessage(message);
+    SAFE_DELETE(message);
+    
+    message = receiveMessage();   
+    if (message->type == MESSAGE_QUERY_RESULT) {        
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "QUERT RESULT MESSAGE RECIEVED", LOG_LEVEL_INFO);
+        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
+        //Song* song = static_cast<Song*> (static_cast<void*> (message.data));                                 
+        SAFE_DELETE(message);
+        return true;
+    } else {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED in download media.", LOG_LEVEL_FATAL);
+        SAFE_DELETE(message);
+        return false;
+    }
 }
 
 void StreamClient::setId(int id) {
@@ -202,21 +262,3 @@ bool StreamClient::isConnected() const {
 void StreamClient::setConnected(bool conn) {
     m_bConnected = conn;
 }
-
-
-/*
-        case MESSAGE_QUERY:
-                Logger::getInstance()->log(m_pClientSocket->getSocketId(), "QUERY MESSAGE RECIEVED", LOG_LEVEL_INFO);	
-                Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
-                break;
-	
-        case MESSAGE_DOWNLOAD:
-                break;
-
-        case MESSAGE_DOWNLOAD_FINISHED:
-                Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD FINISHED MESSAGE RECIEVED", LOG_LEVEL_INFO);
-                break;		
-
-        m_pClientSocket->closeSocket();
- */
-

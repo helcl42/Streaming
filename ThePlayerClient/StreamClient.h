@@ -36,6 +36,8 @@ public:
     void sendMessage(Message* message);
     Message* receiveMessage();
     bool saveBinaryFile(std::string path);
+    bool queryLibrary(std::string name);
+    Song* getSongFromString(std::string songString);
 
     void shutdown();
     int getId() const;

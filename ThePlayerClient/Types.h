@@ -38,24 +38,45 @@ public:
 
     ~Song() {}
 
+   
     int getId() const {
         return m_id;
+    }
+    
+    void setId(int id) {
+        m_id = id;
     }
 
     std::string getTitle() {
         return m_title;
+    }
+    
+    void setTitle(std::string title) {
+        m_title = title;
     }
 
     unsigned int getLength() {
         return m_length;
     }
 
+    void setLength(unsigned int len) {
+        m_length = len;
+    }
+    
     std::string getUrl() {
         return m_url;
+    }
+    
+    void setUrl(std::string url) {
+        m_url = url;
     }
 
     Album * getAlbum() {
         return m_album;
+    }
+    
+    void setAlbum(Album* album) {
+        m_album = album;
     }
 
 };
