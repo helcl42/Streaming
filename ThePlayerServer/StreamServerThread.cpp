@@ -149,7 +149,7 @@ void StreamServerThread::ThreadProcedure() {
 
 Song* StreamServerThread::getSong(int songId) {
     //query library here
-    Song* song = new Song(songId, "07-no-quarter-led-zeppelin-2006-flac", 200, "07-no-quarter-led-zeppelin-2006-flac", NULL);
+    Song* song = new Song(songId, "Mana_Nothing_particular.ogg", 200, "Mana_Nothing_particular.ogg", NULL);
     return song;
 }
 
