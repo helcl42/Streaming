@@ -17,18 +17,21 @@
 
 #include "StreamServerThread.h"
 #include "TCPServerSocket.h"
+#include "CleanUpThread.h"
 
 #define DEBUG
+
 
 class StreamServer {
 protected:
     TCPServerSocket* m_pServerSocket;
+    CleanUpThread* m_pCleaner;
     StreamServerThread** m_pThreads;
     int m_iThreadCount;
 
-private:
+private:    
+    friend class CleanUpThread;
     StreamServer(const StreamServer& ss);
-
     StreamServer& operator=(const StreamServer& ss) {
         return *this;
     };
@@ -40,7 +43,7 @@ public:
     ~StreamServer();
 
     void shutdown();
-    void listenLoop();
+    void startServer();   
 };
 
 #endif	/* STREAMSERVER_H */

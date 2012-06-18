@@ -25,6 +25,7 @@ private:
 
    	pthread_t      m_thread;
 	pthread_attr_t m_attr;
+        bool           m_bRunning;
 
 protected:
    	virtual void ThreadProcedure() = 0;
@@ -47,6 +48,14 @@ public:
 		pthread_attr_destroy(&m_attr);
 		return (rcCount == 0);
    	}
+        
+        void setRunning(bool r) {
+            m_bRunning = r;
+        }
+        
+        bool isRunning() const {
+            return m_bRunning;
+        }
 };
 
 

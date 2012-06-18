@@ -63,31 +63,72 @@ char* StreamServerThread::receiveRawData() {
     return message;
 }
 
+/*
 Message* StreamServerThread::receiveMessage() {
     int partSize = 0;
     int dataLength = sizeof (Message);
 
     Message* message = new Message();
+    do {
+        partSize = read(m_iSocketId, static_cast<Message*> (message), dataLength);
+        if (partSize < dataLength) {
+            Logger::getInstance()->log(m_iSocketId, "Message could be incomplete.", LOG_LEVEL_ERROR);
+        }
+    } while (partSize < dataLength);
+    return message;
+}
+*/
 
-    partSize = read(m_iSocketId, static_cast<Message*> (message), dataLength);
-    if (partSize != dataLength) {
-        Logger::getInstance()->log(m_iSocketId, "Message could be incomplete.", LOG_LEVEL_ERROR);
-    }
+Message* StreamServerThread::receiveMessage() {
+    int partSize = 0;
+    int dataLength = sizeof (Message);
+    int shift = 0;
+
+    char byteMessage[dataLength];
+    char* dataIndex = byteMessage;
+    do {
+        char tmpData[dataLength];
+        partSize = read(m_iSocketId, static_cast<void*> (tmpData), dataLength);
+        memcpy((dataIndex + shift), tmpData, partSize);
+        if (partSize < 0) {
+            Logger::getInstance()->log(m_iSocketId, "Message could be incomplete.", LOG_LEVEL_ERROR);
+        }
+        dataLength -= partSize;
+        shift += partSize;        
+    } while (dataLength > 0);
+
+    Message* message = new Message();
+    memcpy(message, byteMessage, sizeof (Message));
+    printf("type: %d\n", message->type);
+    printf("DataSize: %d\n", message->dataSize);
     return message;
 }
 
+
 void StreamServerThread::sendMessage(Message* message) {
     int sendDataLength = 0;
+    int shift = 0;
     int dataLength = sizeof (Message);
+    int sizeToSend = dataLength;
 
-    do {
-        sendDataLength = write(m_iSocketId, static_cast<void*> (message), sizeof (Message));
-        if (sendDataLength < 0) {
-            Logger::getInstance()->log(m_iSocketId, "Content of send message has invalid size.", LOG_LEVEL_ERROR);
+    if (message != NULL) {
+        void* tmp = static_cast<void*> (message);
+        char* data = static_cast<char*> (tmp);
+        if (data != NULL) {
+            do {
+                sendDataLength = write(m_iSocketId, (data + shift), sizeToSend);
+                if (sendDataLength < 0) {
+                    Logger::getInstance()->log(m_iSocketId, "Content of send message has invalid size.", LOG_LEVEL_ERROR);
+                }
+                sizeToSend -= sendDataLength;
+                shift += sendDataLength;
+            } while (sizeToSend > 0);
         }
-        sendDataLength += sendDataLength;
-    } while (sendDataLength < dataLength);
+    } else {
+        Logger::getInstance()->log(m_iSocketId, "Message pointer is NULL.", LOG_LEVEL_ERROR);
+    }
 }
+
 
 void StreamServerThread::ThreadProcedure() {
     int cnt = 0;
@@ -102,7 +143,7 @@ void StreamServerThread::ThreadProcedure() {
                 Message initMessage;
                 initMessage.type = MESSAGE_CONNECT;
                 sprintf(initMessage.data, "%d", m_iId);
-                sendMessage(&initMessage);                
+                sendMessage(&initMessage);
                 break;
             }
             case MESSAGE_DOWNLOAD:
@@ -126,8 +167,8 @@ void StreamServerThread::ThreadProcedure() {
                         Logger::getInstance()->log(m_iSocketId, "NON-INITIALIZED SONG OBJECT", LOG_LEVEL_INFO);
                     }
                 } else {
-                    Logger::getInstance()->log(m_iSocketId, "IVALID SONG ID", LOG_LEVEL_ERROR);
-                }                
+                    Logger::getInstance()->log(m_iSocketId, "INVALID SONG ID", LOG_LEVEL_ERROR);
+                }
                 break;
             }
             case MESSAGE_QUERY:
@@ -145,14 +186,21 @@ void StreamServerThread::ThreadProcedure() {
         cnt++;
         delete message;
     }
+    setRunning(false);
 }
 
 Song* StreamServerThread::getSong(int songId) {
     //query library here
-    Song* song = new Song(songId, "Mana_Nothing_particular.ogg", 200, "Mana_Nothing_particular.ogg", NULL);
+    Song* song = new Song(songId, "Led_Zeppelin_04_No_Quarter.flac", 200, "Led_Zeppelin_04_No_Quarter.flac", NULL);
     return song;
 }
 
+/**
+ * function , whitch sends binary file, by path
+ * returns true, if send is successfull
+ * @param path
+ * @return bool
+ */
 bool StreamServerThread::sendBinaryFile(std::string path) {
     std::ifstream file(path.c_str(), std::ios::in | std::ios::binary);
     Message dataMessage;
@@ -163,8 +211,7 @@ bool StreamServerThread::sendBinaryFile(std::string path) {
             file.read(dataMessage.data, BUFFSIZE);
             sendMessage(&dataMessage);
             printf("PieceId: %d\n", pieceId);
-            //printf("%s\n", dataMessage.data); 
-            usleep(10000);
+            //printf("%s\n", dataMessage.data);          
         }
         file.close();
     } else {

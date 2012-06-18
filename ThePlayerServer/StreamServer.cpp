@@ -5,19 +5,22 @@ StreamServer::StreamServer(int port) {
     m_pThreads = NULL;
 
     m_pServerSocket = new TCPServerSocket(port);
+    m_pCleaner = new CleanUpThread(this);
 }
 
 StreamServer::~StreamServer() {
-    for (int i = 0; i < m_iThreadCount; i++)
+    for (int i = 0; i < m_iThreadCount; i++) {
         SAFE_DELETE(m_pThreads[i]);
+    }
     SAFE_DELETE_ARRAY(m_pThreads);
-
+    SAFE_DELETE(m_pCleaner);
     SAFE_DELETE(m_pServerSocket);
 }
 
-void StreamServer::listenLoop() {
+void StreamServer::startServer() {
     int socketId = 0;
-
+    
+    m_pCleaner->RunThread();
     Logger::getInstance()->log(m_pServerSocket->getSocketId(), "SERVER STARTED", LOG_LEVEL_INFO);
 
     while (true) {
@@ -27,6 +30,7 @@ void StreamServer::listenLoop() {
             reallocThreads();
             StreamServerThread* newThread = new StreamServerThread(m_iThreadCount, socketId);
             m_pThreads[m_iThreadCount - 1] = newThread;
+            newThread->setRunning(true);
             newThread->RunThread();
         } else {
             Logger::getInstance()->log(m_pServerSocket->getSocketId(), "Socket is not openned.", LOG_LEVEL_FATAL);

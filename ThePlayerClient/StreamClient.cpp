@@ -85,24 +85,50 @@ char* StreamClient::receiveRawData() {
  */
 void StreamClient::sendMessage(Message* message) {
     int sendDataLength = 0;
+    int shift = 0;
+    int dataLength = sizeof (Message);
+    int sizeToSend = dataLength;
+
+    if (message != NULL) {
+        void* tmp = static_cast<void*> (message);
+        char* data = static_cast<char*> (tmp);
+        if (data != NULL) {
+            do {
+                sendDataLength += write(m_pClientSocket->getSocketId(), (data + shift), sizeToSend);
+                if (sendDataLength < 0) {
+                    Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Content of send message has invalid size.", LOG_LEVEL_ERROR);
+                }
+                sizeToSend -= sendDataLength;
+                shift += sendDataLength;
+            } while (sizeToSend > 0);
+        }
+    } else {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Message pointer is NULL.", LOG_LEVEL_ERROR);
+    }
+}
+
+/*
+void StreamClient::sendMessage(Message* message) {
+    int sendDataLength = 0;
     int dataLength = sizeof (Message);
     void* data = static_cast<void*> (message);
     if (data != NULL) {
         do {
-            sendDataLength = write(m_pClientSocket->getSocketId(), data, dataLength);
+            sendDataLength += write(m_pClientSocket->getSocketId(), data, dataLength);
             if (sendDataLength < 0) {
                 Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Content of send message has invalid size.", LOG_LEVEL_ERROR);
             }
-            sendDataLength += sendDataLength;
         } while (sendDataLength < dataLength);
     }
 }
+ */
 
 /** 
  * @return Message*
  * function returns recieved messsage 
  * object from server
  */
+/*
 Message* StreamClient::receiveMessage() {
     int partSize = 0;
     int dataLength = sizeof (Message);
@@ -110,7 +136,40 @@ Message* StreamClient::receiveMessage() {
     partSize = read(m_pClientSocket->getSocketId(), static_cast<Message*> (message), dataLength);
     if (partSize != dataLength) {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Message could be incomplete.", LOG_LEVEL_ERROR);
-    }
+    }   
+    return message;
+}
+ */
+
+/**
+ * master receive message
+ * @return 
+ */
+Message* StreamClient::receiveMessage() {
+    int partSize = 0;
+    int dataLength = sizeof (Message);
+    int shift = 0;
+
+    char byteMessage[dataLength];
+    char* dataIndex = byteMessage;
+    do {
+        char tmpData[dataLength];
+        partSize = read(m_pClientSocket->getSocketId(), static_cast<void*> (tmpData), dataLength);
+        memcpy((dataIndex + shift), tmpData, partSize);
+        if (partSize < 0) {
+            Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Message could be incomplete.", LOG_LEVEL_ERROR);
+        }
+        dataLength -= partSize;
+        shift += partSize;
+        printf("size received: %d\n", partSize);
+        printf("new dataLength: %d\n", dataLength);
+        printf("----------------------------------\n");
+    } while (dataLength > 0);
+
+    Message* message = new Message();
+    memcpy(message, byteMessage, sizeof (Message));
+    printf("type: %d\n", message->type);
+    printf("DataSize: %d\n", message->dataSize);
     return message;
 }
 
@@ -177,12 +236,18 @@ bool StreamClient::downloadMedia(int id) {
  * function returns Song object pointer from object string
  */
 Song* StreamClient::getSongFromString(std::string songString) {
-    Song* song = new Song();
+    Song* song = NULL;
     std::vector<std::string> strs = Util::split(songString, ':');
-    song->setId(atoi(strs[0].c_str()));
-    song->setTitle(strs[1]);
-    song->setLength(atoi(strs[2].c_str()));
-    song->setUrl(strs[3]);
+    if (strs.size() > 3) {
+        song = new Song();
+        song->setId(atoi(strs[0].c_str()));
+        song->setTitle(strs[1]);
+        song->setLength(atoi(strs[2].c_str()));
+        song->setUrl(strs[3]);
+    } else {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "GET SONG FROM STRING > INCOMPLETE OBJECT", LOG_LEVEL_ERROR);
+        return NULL;
+    }
     return song;
 }
 
@@ -203,10 +268,11 @@ bool StreamClient::saveBinaryFile(std::string path) {
             file.close();
             return true;
         }
-        if (recvMessage->type != MESSAGE_DATA || recvMessage->dataSize < 0) {
+        if (recvMessage->type != MESSAGE_DATA) {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "INVALID MESSAGE TYPE OR SIZE -> WHILE DOWNLOADING MEDIA.", LOG_LEVEL_ERROR);
             return false;
         }
+
         file.write(recvMessage->data, BUFFSIZE);
         printf("PieceId: %d\n", pieceId);
         //printf("%s\n", recvMessage->data);
@@ -228,9 +294,9 @@ bool StreamClient::queryLibrary(std::string name) {
     message->dataSize = strlen(name.c_str());
     sendMessage(message);
     SAFE_DELETE(message);
-    
-    message = receiveMessage();   
-    if (message->type == MESSAGE_QUERY_RESULT) {        
+
+    message = receiveMessage();
+    if (message->type == MESSAGE_QUERY_RESULT) {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "QUERT RESULT MESSAGE RECIEVED", LOG_LEVEL_INFO);
         Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
         //Song* song = static_cast<Song*> (static_cast<void*> (message.data));                                 

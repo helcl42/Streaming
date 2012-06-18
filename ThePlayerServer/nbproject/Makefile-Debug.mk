@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/StreamServer.o \
+	${OBJECTDIR}/CleanUpThread.o \
 	${OBJECTDIR}/TCPServerSocket.o \
 	${OBJECTDIR}/StreamServerThread.o \
 	${OBJECTDIR}/Logger.o
@@ -74,6 +75,11 @@ ${OBJECTDIR}/StreamServer.o: StreamServer.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/StreamServer.o StreamServer.cpp
+
+${OBJECTDIR}/CleanUpThread.o: CleanUpThread.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/CleanUpThread.o CleanUpThread.cpp
 
 ${OBJECTDIR}/TCPServerSocket.o: TCPServerSocket.cpp 
 	${MKDIR} -p ${OBJECTDIR}

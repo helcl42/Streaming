@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
             return 0;
         }
         StreamServer* ss = new StreamServer(port);
-        ss->listenLoop();
+        ss->startServer();
         ss->shutdown();
         SAFE_DELETE(ss);
     } else {

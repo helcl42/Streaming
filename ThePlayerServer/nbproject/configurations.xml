@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>CleanUpThread.h</itemPath>
       <itemPath>Logger.h</itemPath>
       <itemPath>Message.h</itemPath>
       <itemPath>StreamServer.h</itemPath>
@@ -20,6 +21,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>CleanUpThread.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
       <itemPath>StreamServer.cpp</itemPath>
       <itemPath>StreamServerThread.cpp</itemPath>
