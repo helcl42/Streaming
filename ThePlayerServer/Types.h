@@ -17,7 +17,7 @@ class Album;
 class Library;
 
 class Song {
-    // friend class Library;
+    friend class Library;
 
     int m_id;
     std::string m_title;
@@ -80,7 +80,7 @@ public:
         m_album = album;
     }
 
-    std::string getAsString() {
+    std::string toString() {
         std::stringstream ss;
         ss << m_id;
         ss << ":";
@@ -89,25 +89,23 @@ public:
         ss << m_length;
         ss << ":";
         ss << m_url;
+        ss << '\0';
         return ss.str();
     }
-
-
 };
 
 class Album {
-    //friend class Library;
+private:    
+    friend class Library;
+    
     std::string m_title;
     int m_id;
     Artist * m_artist;
     std::vector<Song *> m_songs;
 
-    Album(int id, std::string title, Artist * artist) : m_title(title), m_id(id),
-    m_artist(artist) {
-    }
+    Album(int id, std::string title, Artist * artist) : m_title(title), m_id(id), m_artist(artist) { }
 
-public:
-
+public:       
     ~Album() {
         for (std::vector<Song*>::iterator it = m_songs.begin(); it != m_songs.end(); it++) {
             delete *it;
@@ -122,23 +120,32 @@ public:
         return m_id;
     }
 
-    Artist * getArtist() {
+    Artist* getArtist() {
         return m_artist;
     }
 
     std::vector<Song *> getSongs() {
         return m_songs;
     }
+    
+    std::string toString() {
+        std::stringstream ss;
+        ss << m_id;
+        ss << ":";
+        ss << m_title;              
+        return ss.str();
+    }
 };
 
 class Artist {
-    //  friend class Library;
+private:    
+    friend class Library;
+    
     std::string m_name;
     int m_id;
     std::vector<Album *> m_albums;
 
-    Artist(int id, std::string name) : m_name(name), m_id(id) {
-    }
+    Artist(int id, std::string name) : m_name(name), m_id(id) { }
 
 public:
 
@@ -158,6 +165,14 @@ public:
 
     std::vector<Album *> getAlbums() {
         return m_albums;
+    }
+    
+    std::string toString() {
+        std::stringstream ss;
+        ss << m_id;
+        ss << ":";
+        ss << m_name;              
+        return ss.str();
     }
 };
 

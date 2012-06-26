@@ -12,7 +12,14 @@ typedef enum {
     MESSAGE_CONNECT = 0,
     MESSAGE_QUERY,
     MESSAGE_QUERY_RESULT,
+    MESSAGE_QUERY_RESULT_ARTIST,
+    MESSAGE_QUERY_RESULT_ARTIST_FINISHED,
+    MESSAGE_QUERY_RESULT_ALBUM,            
+    MESSAGE_QUERY_RESULT_ALBUM_FINISHED,
+    MESSAGE_QUERY_RESULT_SONG,
+    MESSAGE_QUERY_RESULT_SONG_FINISHED,
     MESSAGE_WHAT_DOWNLOAD,
+    MESSAGE_DOWNLOAD_START,
     MESSAGE_DOWNLOAD,
     MESSAGE_DOWNLOAD_FINISHED,
     MESSAGE_DATA,
@@ -21,17 +28,6 @@ typedef enum {
     MESSAGE_UNKNOWN
 } MessageType;
 
-
-//-> poslu message z klienta na server INFO CONNECT
-//<- server posle klientovi id, ktery bodou pouzivat celou session INFO CONNECT
-//-> klient budto posle dotaz s textem nebo prazdny MESSAGE_QUERY DATA
-//<- server posle XML obraz adresarovy struktury, ktera se musi natahnout do library MESSAGE_QUERY DATA
-//-> ve chvili kdy klient klikne na nejako skladbu v library, posle zpravu MESSAGE_DOWNLOAD DATA s id songu
-//<- server da dotaz na DB, najde song podle id a zacina streamovani bude se posilat asi po 1024B MESSAGE_DOWNLOAD DATA
-//-> klient posle info message INFO MESSAGE_DOWNLOAD
-//	...
-//<- server posle download finished INFO DOWNLOAD_FINISHED
-//-> po uzavreni library se klient odpoji a na servru se dealokuje
 
 #define BUFFSIZE 1024
 

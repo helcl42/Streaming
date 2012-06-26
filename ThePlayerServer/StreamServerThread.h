@@ -17,13 +17,15 @@
 #include "Types.h"
 #include "Message.h"
 #include "Logger.h"
+#include "Library.h"
 
 #define BUFFSIZE 1024
 
 class StreamServerThread : public Thread {
 private:
-    int m_iId;
-    int m_iSocketId;
+    int      m_iId;
+    int      m_iSocketId;
+    Library* m_library;    
 
 protected:
     void ThreadProcedure();
@@ -32,18 +34,17 @@ public:
     StreamServerThread(int id, int socketId);
     ~StreamServerThread();
     
-    void sendRawData(char* data, int length);
-    char* receiveRawData();
+    void     sendRawData(char* data, int length);
+    char*    receiveRawData();
 
     Message* receiveMessage();
-    void sendMessage(Message* message);
+    void     sendMessage(Message* message);
     
-    bool sendBinaryFile(std::string path);
-    ///???
-    Song* getSong(int songId);
+    bool     sendBinaryFile(std::string path);
+    bool     sendQueryResult();
 
-    int getId() const;
-    int getSocketId() const;
+    int      getId() const;
+    int      getSocketId() const;
 };
 
 #endif	/* STREAMSERVERTHREAD_H */

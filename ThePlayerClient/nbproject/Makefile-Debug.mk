@@ -19,6 +19,7 @@ CCC=g++-4.6
 CXX=g++-4.6
 FC=gfortran
 AS=as
+QMAKE=qmake-qt4
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
@@ -33,11 +34,7 @@ include Makefile
 OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
-OBJECTFILES= \
-	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/StreamClient.o \
-	${OBJECTDIR}/TCPClientSocket.o \
-	${OBJECTDIR}/Logger.o
+OBJECTFILES=
 
 
 # C Compiler Flags
@@ -54,48 +51,27 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lpthread
+LDLIBSOPTIONS=-lQtGLib-2.0 -lQtGStreamer-0.10 -lQtGStreamerUi-0.10 -lQtGStreamerUtils-0.10 -lpthread
+
+nbproject/qt-${CND_CONF}.mk: nbproject/qt-${CND_CONF}.pro FORCE
+	${QMAKE} VPATH=. -o qttmp-${CND_CONF}.mk nbproject/qt-${CND_CONF}.pro
+	mv -f qttmp-${CND_CONF}.mk nbproject/qt-${CND_CONF}.mk
+
+FORCE:
 
 # Build Targets
-.build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/theplayerclient
+.build-conf: ${BUILD_SUBPROJECTS} nbproject/qt-${CND_CONF}.mk
+	"${MAKE}" -f nbproject/qt-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ThePlayerClient
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/theplayerclient: ${OBJECTFILES}
-	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/theplayerclient ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/main.o: main.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
-
-${OBJECTDIR}/StreamClient.o: StreamClient.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/StreamClient.o StreamClient.cpp
-
-${OBJECTDIR}/TCPClientSocket.o: TCPClientSocket.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/TCPClientSocket.o TCPClientSocket.cpp
-
-${OBJECTDIR}/Logger.o: Logger.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Logger.o Logger.cpp
+${CND_BUILDDIR}/Debug/%.o: nbproject/qt-${CND_CONF}.mk
+	${MAKE} -f nbproject/qt-${CND_CONF}.mk "$@"
 
 # Subprojects
 .build-subprojects:
 
 # Clean Targets
-.clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/theplayerclient
+.clean-conf: ${CLEAN_SUBPROJECTS} nbproject/qt-${CND_CONF}.mk
+	${MAKE} -f nbproject/qt-${CND_CONF}.mk distclean
 
 # Subprojects
 .clean-subprojects:
-
-# Enable dependency checking
-.dep.inc: .depcheck-impl
-
-include .dep.inc

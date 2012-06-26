@@ -1,11 +1,10 @@
 #include "TCPClientSocket.h"
 
-TCPClientSocket::TCPClientSocket(char* hostname, int port) {
+TCPClientSocket::TCPClientSocket(const char* hostname, int port) {
     m_cHostname = hostname;
     m_iPort = port;
     if (!connectSocket()) {
         Logger::getInstance()->log(m_iSocketId, "Can not connect to server.", LOG_LEVEL_FATAL);
-        exit(1);
     }
 }
 
@@ -48,3 +47,4 @@ int TCPClientSocket::getSocketId() const {
 void TCPClientSocket::closeSocket() {
     close(m_iSocketId);
 }
+

@@ -1,19 +1,16 @@
 #include "StreamServerThread.h"
 
-StreamServerThread::StreamServerThread(int id, int socketId) {
-    m_iId = id;
-    m_iSocketId = socketId;
+StreamServerThread::StreamServerThread(int id, int socketId) : m_iId(id), m_iSocketId(socketId) {
+    m_library = new Library();
+
+    if (m_library->connectToDB("localhost", "root", "", "thePlayer")) {
+        Logger::getInstance()->log(m_iSocketId, "SUCCESSFULLY CONNECTED TO DB.", LOG_LEVEL_ERROR);
+    } else {
+        Logger::getInstance()->log(m_iSocketId, "COULD NOT CONNECT TO DB.", LOG_LEVEL_ERROR);
+    }
 }
 
 StreamServerThread::~StreamServerThread() {
-}
-
-int StreamServerThread::getId() const {
-    return m_iId;
-}
-
-int StreamServerThread::getSocketId() const {
-    return m_iSocketId;
 }
 
 void StreamServerThread::sendRawData(char* buffer, int dataLength) {
@@ -63,22 +60,6 @@ char* StreamServerThread::receiveRawData() {
     return message;
 }
 
-/*
-Message* StreamServerThread::receiveMessage() {
-    int partSize = 0;
-    int dataLength = sizeof (Message);
-
-    Message* message = new Message();
-    do {
-        partSize = read(m_iSocketId, static_cast<Message*> (message), dataLength);
-        if (partSize < dataLength) {
-            Logger::getInstance()->log(m_iSocketId, "Message could be incomplete.", LOG_LEVEL_ERROR);
-        }
-    } while (partSize < dataLength);
-    return message;
-}
-*/
-
 Message* StreamServerThread::receiveMessage() {
     int partSize = 0;
     int dataLength = sizeof (Message);
@@ -94,7 +75,7 @@ Message* StreamServerThread::receiveMessage() {
             Logger::getInstance()->log(m_iSocketId, "Message could be incomplete.", LOG_LEVEL_ERROR);
         }
         dataLength -= partSize;
-        shift += partSize;        
+        shift += partSize;
     } while (dataLength > 0);
 
     Message* message = new Message();
@@ -103,7 +84,6 @@ Message* StreamServerThread::receiveMessage() {
     printf("DataSize: %d\n", message->dataSize);
     return message;
 }
-
 
 void StreamServerThread::sendMessage(Message* message) {
     int sendDataLength = 0;
@@ -119,6 +99,7 @@ void StreamServerThread::sendMessage(Message* message) {
                 sendDataLength = write(m_iSocketId, (data + shift), sizeToSend);
                 if (sendDataLength < 0) {
                     Logger::getInstance()->log(m_iSocketId, "Content of send message has invalid size.", LOG_LEVEL_ERROR);
+                    break;
                 }
                 sizeToSend -= sendDataLength;
                 shift += sendDataLength;
@@ -129,10 +110,8 @@ void StreamServerThread::sendMessage(Message* message) {
     }
 }
 
-
 void StreamServerThread::ThreadProcedure() {
-    int cnt = 0;
-    while (cnt < 2) {
+    while (true) {
         Message* message = receiveMessage();
 
         switch (message->type) {
@@ -146,16 +125,16 @@ void StreamServerThread::ThreadProcedure() {
                 sendMessage(&initMessage);
                 break;
             }
-            case MESSAGE_DOWNLOAD:
+            case MESSAGE_DOWNLOAD_START:
             {
                 Logger::getInstance()->log(m_iSocketId, "MESSAGE DOWNLOAD RECEIVED", LOG_LEVEL_INFO);
                 Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);
                 int songId = atoi(message->data);
                 if (songId > 0) {
-                    Song* song = getSong(songId);
+                    Song* song = m_library->getSong(songId);
                     if (song != NULL) {
-                        std::string songString = song->getAsString();
-                        int songSize = strlen(songString.c_str());
+                        std::string songString = song->toString();
+                        int songSize = songString.size();
                         Message mediaMessage;
                         memcpy(mediaMessage.data, songString.c_str(), songSize);
                         mediaMessage.dataSize = songSize;
@@ -175,29 +154,38 @@ void StreamServerThread::ThreadProcedure() {
             {
                 Logger::getInstance()->log(m_iSocketId, "MESSAGE QUERY RECEIVED", LOG_LEVEL_INFO);
                 Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);
-                //call library to query message->data identifier
+                std::string query = std::string(message->data);
+                Message mediaMessage;
+                if (m_library->search(query)) {
+                    sprintf(mediaMessage.data, "%s", "OK");
+                } else {
+                    sprintf(mediaMessage.data, "%s", "NO");
+                }
+                mediaMessage.type = MESSAGE_QUERY_RESULT;
+                mediaMessage.dataSize = 2;
+                sendMessage(&mediaMessage);
+
+                if (sendQueryResult()) {
+                    Logger::getInstance()->log(m_iSocketId, "QUERY RESULT WAS SEND SUCCESSFULLY", LOG_LEVEL_INFO);
+                } else {
+                    Logger::getInstance()->log(m_iSocketId, "SOMETHING WENT WRONG WHILE SENDING QUERY RESULT", LOG_LEVEL_ERROR);
+                }
                 break;
             }
             default:
+            {
                 Logger::getInstance()->log(m_iSocketId, "UNKNOWN MESSAGE RECEIVED", LOG_LEVEL_FATAL);
                 break;
+            }
         }
         SAFE_DELETE(message);
-        cnt++;
-        delete message;
     }
     setRunning(false);
 }
 
-Song* StreamServerThread::getSong(int songId) {
-    //query library here
-    Song* song = new Song(songId, "Led_Zeppelin_04_No_Quarter.flac", 200, "Led_Zeppelin_04_No_Quarter.flac", NULL);
-    return song;
-}
-
 /**
- * function , whitch sends binary file, by path
- * returns true, if send is successfull
+ * sends binary file located by param path
+ * returns true, if send was successfull
  * @param path
  * @return bool
  */
@@ -210,8 +198,8 @@ bool StreamServerThread::sendBinaryFile(std::string path) {
         for (int pieceId = 0; !file.eof(); ++pieceId) {
             file.read(dataMessage.data, BUFFSIZE);
             sendMessage(&dataMessage);
-            printf("PieceId: %d\n", pieceId);
-            //printf("%s\n", dataMessage.data);          
+            //printf("PieceId: %d\n", pieceId);
+            //usleep(10000);            
         }
         file.close();
     } else {
@@ -226,7 +214,62 @@ bool StreamServerThread::sendBinaryFile(std::string path) {
     return true;
 }
 
+/**
+ * alpha version :)
+ * sends query result tree to client
+ * @return bool
+ */
+bool StreamServerThread::sendQueryResult() {
+    m_library->printResult();
+    Message* message = new Message();
+    std::vector<Artist*> artists = m_library->getArtists();
+    for (std::vector<Artist*>::iterator artIt = artists.begin(); artIt != artists.end(); ++artIt) {
+        Artist* artist = (*artIt);
+        std::string artistString = artist->toString();
+        message->type = MESSAGE_QUERY_RESULT_ARTIST;
+        sprintf(message->data, "%s", artistString.c_str());
+        message->dataSize = artistString.size();
+        sendMessage(message);
+        std::vector<Album*> albums = artist->getAlbums();
+        for (std::vector<Album*>::iterator albIt = albums.begin(); albIt != albums.end(); ++albIt) {
+            Album* album = (*albIt);
+            std::string albumString = album->toString();
+            message->type = MESSAGE_QUERY_RESULT_ALBUM;
+            sprintf(message->data, "%s", albumString.c_str());
+            message->dataSize = albumString.size();
+            sendMessage(message);
+            std::vector<Song*> songs = album->getSongs();
+            for (std::vector<Song*>::iterator songIt = songs.begin(); songIt != songs.end(); ++songIt) {
+                Song* song = (*songIt);
+                std::string songString = song->toString();
+                message->type = MESSAGE_QUERY_RESULT_SONG;
+                sprintf(message->data, "%s", songString.c_str());
+                message->dataSize = songString.size();
+                sendMessage(message);
+            }
+            message->type = MESSAGE_QUERY_RESULT_SONG_FINISHED;
+            message->dataSize = 0;
+            sprintf(message->data, "%s", "SONG FINISHED");
+            sendMessage(message);
+        }
+        message->type = MESSAGE_QUERY_RESULT_ALBUM_FINISHED;
+        message->dataSize = 0;
+        sprintf(message->data, "%s", "ALBUM FINISHED");
+        sendMessage(message);
+    }
+    message->type = MESSAGE_QUERY_RESULT_ARTIST_FINISHED;
+    message->dataSize = 0;
+    sprintf(message->data, "%s", "ARTIST FINISHED");
+    sendMessage(message);
+    return true;
+}
 
+int StreamServerThread::getId() const {
+    return m_iId;
+}
 
+int StreamServerThread::getSocketId() const {
+    return m_iSocketId;
+}
 
 

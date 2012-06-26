@@ -1,5 +1,7 @@
 #include "Logger.h"
 
+Logger* Logger::m_pInstance = NULL;
+
 Logger::Logger() : m_bStdOutput(STD_DEBUG) {
     m_outFile.open("log.log");
     pthread_mutex_init(&m_mutex, NULL);
@@ -98,7 +100,7 @@ void Logger::deleteNewLines(std::string& s) {
     int n = 0;
     for (unsigned int i = 0; i < s.length(); i++) {
         if (s[i] == '\n') {
-            n++; //we increase the number of newlines we have found so far
+            n++;
         } else {
             s[i - n] = s[i];
         }
@@ -106,5 +108,5 @@ void Logger::deleteNewLines(std::string& s) {
     s.resize(s.length() - n);
 }
 
-Logger* Logger::m_pInstance = NULL;
+
 

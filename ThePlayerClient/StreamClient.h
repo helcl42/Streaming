@@ -8,39 +8,45 @@
 #ifndef STREAMCLIENT_H
 #define	STREAMCLIENT_H
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
+
 #include "Utils.h"
 #include "TCPClientSocket.h"
 #include "Logger.h"
 #include "Message.h"
 #include "Types.h"
+#include "Thread.h"
 
 #define BUFFSIZE 1024
 
-class StreamClient {
-private:
-    int m_iId;
-    bool m_bConnected;
-    TCPClientSocket* m_pClientSocket;
 
+class Library;
+
+class StreamClient : public Thread {        
+protected:
+    int              m_iId;
+    bool             m_bConnected;
+    TCPClientSocket* m_pClientSocket;    
+    
     void setId(int id);
 
-public:
-    StreamClient(char* hostname, int port);
+public:            
+    StreamClient(std::string host, int port);
+    StreamClient(const char* hostname, int port);
     ~StreamClient();
 
-    bool connectToServer();
-    bool downloadMedia(int id);
-
-    void sendRawData(char* data, int length);
-    char* receiveRawData();
-    void sendMessage(Message* message);
-    Message* receiveMessage();
-    bool saveBinaryFile(std::string path);
-    bool queryLibrary(std::string name);
-    Song* getSongFromString(std::string songString);
-
-    void shutdown();
-    int getId() const;
+    bool     connectToServer();
+    void     shutdown();
+    
+    void     sendRawData(char* data, int length);
+    char*    receiveRawData();
+    bool     sendMessage(Message* message);
+    Message* receiveMessage();        
+            
+    int  getId() const;
+    
     bool isConnected() const;
     void setConnected(bool conn);
 };

@@ -23,13 +23,13 @@
 #define BUFFSIZE 1024
 
 class TCPClientSocket {
-private:
+protected:
     int m_iSocketId;
-    char* m_cHostname;
+    const char* m_cHostname;
     int m_iPort;
 
 public:
-    TCPClientSocket(char* hostname, int port);
+    TCPClientSocket(const char* hostname, int port);
     ~TCPClientSocket();
 
     bool connectSocket();

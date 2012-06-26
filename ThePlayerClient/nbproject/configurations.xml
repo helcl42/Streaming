@@ -4,10 +4,19 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>AlbumWidget.h</itemPath>
+      <itemPath>CoverDownloader.h</itemPath>
+      <itemPath>HttpClientSocket.h</itemPath>
+      <itemPath>Library.h</itemPath>
       <itemPath>Logger.h</itemPath>
+      <itemPath>MediaApp.h</itemPath>
       <itemPath>Message.h</itemPath>
+      <itemPath>Player.h</itemPath>
+      <itemPath>Playlist.h</itemPath>
       <itemPath>StreamClient.h</itemPath>
+      <itemPath>StreamMediaClient.h</itemPath>
       <itemPath>TCPClientSocket.h</itemPath>
+      <itemPath>Thread.h</itemPath>
       <itemPath>Types.h</itemPath>
       <itemPath>Utils.h</itemPath>
     </logicalFolder>
@@ -18,8 +27,16 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>AlbumWidget.cpp</itemPath>
+      <itemPath>CoverDownloader.cpp</itemPath>
+      <itemPath>HttpClientSocket.cpp</itemPath>
+      <itemPath>Library.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
+      <itemPath>MediaApp.cpp</itemPath>
+      <itemPath>Player.cpp</itemPath>
+      <itemPath>Playlist.cpp</itemPath>
       <itemPath>StreamClient.cpp</itemPath>
+      <itemPath>StreamMediaClient.cpp</itemPath>
       <itemPath>TCPClientSocket.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
@@ -37,24 +54,41 @@
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="Debug" type="1">
+    <conf name="Debug" type="4">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
       </toolsSet>
+      <qt>
+        <modules>core gui</modules>
+      </qt>
       <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>/usr/lib/QtGStreamer</pElem>
+            <pElem>/usr/include/QtGStreamer</pElem>
+          </incDir>
+        </ccTool>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibLibItem>QtGLib-2.0</linkerLibLibItem>
+            <linkerLibLibItem>QtGStreamer-0.10</linkerLibLibItem>
+            <linkerLibLibItem>QtGStreamerUi-0.10</linkerLibLibItem>
+            <linkerLibLibItem>QtGStreamerUtils-0.10</linkerLibLibItem>
             <linkerLibLibItem>pthread</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
     </conf>
-    <conf name="Release" type="1">
+    <conf name="Release" type="4">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
       </toolsSet>
+      <qt>
+        <buildMode>1</buildMode>
+        <modules>core gui</modules>
+      </qt>
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>

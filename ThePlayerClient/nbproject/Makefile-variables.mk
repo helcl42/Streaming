@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=theplayerclient
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/theplayerclient
+CND_ARTIFACT_NAME_Debug=ThePlayerClient
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/ThePlayerClient
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=theplayerclient.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/theplayerclient.tar
+CND_PACKAGE_NAME_Debug=ThePlayerClient.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/ThePlayerClient.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=theplayerclient
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/theplayerclient
+CND_ARTIFACT_NAME_Release=ThePlayerClient
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/ThePlayerClient
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=theplayerclient.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/theplayerclient.tar
+CND_PACKAGE_NAME_Release=ThePlayerClient.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/ThePlayerClient.tar
 #
 # include compiler specific variables
 #

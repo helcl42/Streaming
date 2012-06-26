@@ -21,10 +21,10 @@
 
 class TCPServerSocket {
 private:
-    int m_iPort;
-    int m_iSocketListen;
+    int                m_iPort;
+    int                m_iSocketListen;
     struct sockaddr_in m_listenAddress;
-    bool m_bIsOpenned;
+    bool               m_bIsOpenned;
 
 public:
 
@@ -32,10 +32,10 @@ public:
     ~TCPServerSocket();
 
     bool openSocket();
-    int acceptSocket();
+    int  acceptSocket();
     bool isOpened() const;
     void closeSocket();
-    int getSocketId() const;
+    int  getSocketId() const;
 };
 
 

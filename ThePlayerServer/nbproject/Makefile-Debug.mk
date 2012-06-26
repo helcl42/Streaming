@@ -34,6 +34,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Library.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/StreamServer.o \
 	${OBJECTDIR}/CleanUpThread.o \
@@ -56,7 +57,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lpthread
+LDLIBSOPTIONS=-lpthread -lmysqlcppconn
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -65,6 +66,11 @@ LDLIBSOPTIONS=-lpthread
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/theplayerserver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/theplayerserver ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/Library.o: Library.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/Library.o Library.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
