@@ -1,4 +1,4 @@
 Streaming
 =========
 
-Stream server-client (media player)
+Stream server-client (media player), plays any audio/video format on linux(pthread).
