@@ -38,6 +38,9 @@ public:
     virtual ~Library();
     
     void connectToServer(std::string url, int port);
+    void downloadCallback(bool succes);
+    void searchCallback(bool success);
+    
     void enableSearch(bool val);
     void printQueryResutl();
     void clearData();
@@ -50,8 +53,7 @@ public:
 private Q_SLOTS:
     void search();    
     void selectFromTree(const QItemSelection&, const QItemSelection&);     
-    void download(Song* song);
-    void downloadCallback();
+    void download(Song* song);    
 
 private:
     friend class StreamMediaClient;

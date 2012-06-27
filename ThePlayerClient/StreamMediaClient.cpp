@@ -34,11 +34,12 @@ bool StreamMediaClient::downloadMedia(Song* sng) {
         changeSavePath(song);        
         MediaApp::getInstance()->getPlaylistInstance()->insert(song);        
         saveBinaryFile(song->getUrl());
-        Library::getInstance()->downloadCallback();
+        Library::getInstance()->downloadCallback(true);
         SAFE_DELETE(message);        
         return true;
     } else {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED in download media.", LOG_LEVEL_FATAL);
+        Library::getInstance()->downloadCallback(false);
         SAFE_DELETE(message);
         return false;
     }
@@ -113,7 +114,7 @@ bool StreamMediaClient::saveBinaryFile(std::string path) {
  * @return true if query message sequence is correct
  * and player updates library list
  */
-bool StreamMediaClient::queryLibrary() {
+bool StreamMediaClient::queryLibrary() {    
     Message* message = new Message();
     message->type = MESSAGE_QUERY;
     sprintf(message->data, "%s", m_queryString.c_str());
@@ -130,10 +131,12 @@ bool StreamMediaClient::queryLibrary() {
         } else {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "NO SUITABLE DATA.", LOG_LEVEL_INFO);
         }
+        Library::getInstance()->searchCallback(true);
         SAFE_DELETE(message);
         return true;
     } else {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN MESSAGE RECEIVED WHILE QUERING DB.", LOG_LEVEL_FATAL);
+        Library::getInstance()->searchCallback(false);
         SAFE_DELETE(message);
         return false;
     }

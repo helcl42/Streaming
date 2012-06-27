@@ -60,7 +60,7 @@ void Library::createUI(QBoxLayout* appLayout) {
 
     m_searchLabel = new QLabel("Search:");
     m_statusMessasge = new QLabel("Unkonwn status.");
-    m_inputMessage = new QLineEdit();
+    m_inputMessage = new QLineEdit();    
     m_inputMessage->setContentsMargins(2, 2, 2, 2);
     m_searchButton = initButton(QStyle::SP_ArrowForward, tr("Search"), this, SLOT(search()), inputLayout);
     inputLayout->addWidget(m_searchButton);
@@ -77,18 +77,29 @@ void Library::connectToServer(std::string url, int port) {
         Logger::getInstance()->log(m_streamClient->getId(), "ALREADY CONNECTED.", LOG_LEVEL_INFO);
         return;
     }
-    
+
     m_streamClient->setOperation(OP_CONNECT);
-    m_streamClient->RunThread();    
+    m_streamClient->RunThread();
 }
 
-void Library::search() {    
+void Library::search() {
     clearData();
+    m_statusMessasge->setText("Querying");
+    m_searchButton->setEnabled(false);
     m_streamClient->setOperation(OP_QUERY);
     m_streamClient->setQueryString(m_inputMessage->text().toStdString());
     m_streamClient->RunThread();
-    m_streamClient->WaitForThreadToExit();
-    createModel();
+
+}
+
+void Library::searchCallback(bool success) {
+    if (success) {
+        createModel();
+        m_statusMessasge->setText("Query finished");
+    } else {
+        m_statusMessasge->setText("Query failed");
+    }
+    m_searchButton->setEnabled(true);
 }
 
 void Library::createModel() {
@@ -192,8 +203,7 @@ void Library::download(Song* song) {
                 m_searchButton->setEnabled(false);
                 m_streamClient->setOperation(OP_DOWNLOAD);
                 m_streamClient->setDownloadSong(song);
-                m_streamClient->RunThread();
-                //m_streamClient->WaitForThreadToExit();
+                m_streamClient->RunThread();                
             }
         } else {
             Logger::getInstance()->log(m_streamClient->getId(), "ALREADY IN PLAYLIST", LOG_LEVEL_INFO);
@@ -203,9 +213,13 @@ void Library::download(Song* song) {
     }
 }
 
-void Library::downloadCallback() {
-    m_searchButton->setEnabled(true);    
-    m_statusMessasge->setText("Download Finished");
+void Library::downloadCallback(bool success) {
+    if (success) {
+        m_statusMessasge->setText("Download Finished");
+    } else {
+        m_statusMessasge->setText("Download Failed");
+    }
+    m_searchButton->setEnabled(true);
 }
 
 void Library::printQueryResutl() {
@@ -274,7 +288,6 @@ void Library::clearData() {
      */
     m_artists.clear();
 }
-
 
 void Library::enableSearch(bool val) {
     m_searchButton->setEnabled(val);
