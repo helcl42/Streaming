@@ -33,10 +33,9 @@ void CleanUpThread::shringThreadArray(int toDelete) {
     int newSize = threadCount - toDelete;
     StreamServerThread** newThreads = new StreamServerThread*[newSize];
 
-    for (int j = 0, i = 0; i < threadCount; i++) {
+    for (int j = 0, i = 0; i < threadCount; i++, j++) {
         if (threads[i] != NULL) {
-            newThreads[j] = threads[i];
-            j++;
+            newThreads[j] = threads[i];            
         }
     }
 
