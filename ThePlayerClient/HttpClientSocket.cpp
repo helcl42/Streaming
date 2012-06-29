@@ -32,8 +32,8 @@ bool HttpClientSocket::sendRequest(std::string request) {
 }
 
 std::string HttpClientSocket::getResponse() {
-    int partSize = 0;
     int dataLength = RESPONSE_SIZE;
+    int partSize = 0;    
     int shift = 0;
 
     char byteMessage[dataLength];
