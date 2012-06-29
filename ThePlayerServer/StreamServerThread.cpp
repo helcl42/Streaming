@@ -4,7 +4,7 @@ StreamServerThread::StreamServerThread(int id, int socketId) : m_iId(id), m_iSoc
     m_library = new Library();
 
     if (m_library->connectToDB("localhost", "root", "", "thePlayer")) {
-        Logger::getInstance()->log(m_iSocketId, "SUCCESSFULLY CONNECTED TO DB.", LOG_LEVEL_ERROR);
+        Logger::getInstance()->log(m_iSocketId, "SUCCESSFULLY CONNECTED TO DB.", LOG_LEVEL_INFO);
     } else {
         Logger::getInstance()->log(m_iSocketId, "COULD NOT CONNECT TO DB.", LOG_LEVEL_ERROR);
     }

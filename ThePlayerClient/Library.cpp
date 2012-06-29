@@ -14,7 +14,6 @@ Library::Library() : QWidget() {
     m_playlist = MediaApp::getInstance()->getPlaylistInstance();
     m_streamClient = NULL;
 
-
     QVBoxLayout* vLayout = new QVBoxLayout();
     m_viewData = new QTreeView(this);
     m_viewData->setHeaderHidden(true);
@@ -44,7 +43,8 @@ Library::~Library() {
     clearData();
 }
 
-QToolButton* Library::initButton(QStyle::StandardPixmap icon, const QString & tip, QObject *dstobj, const char *slot_method, QLayout *layout) {
+QToolButton* Library::initButton(QStyle::StandardPixmap icon, const QString& tip, QObject* dstobj,
+        const char* slot_method, QLayout* layout) {
     QToolButton* button = new QToolButton();
     button->setIcon(style()->standardIcon(icon));
     button->setIconSize(QSize(20, 20));
@@ -60,7 +60,7 @@ void Library::createUI(QBoxLayout* appLayout) {
 
     m_searchLabel = new QLabel("Search:");
     m_statusMessasge = new QLabel("Unkonwn status.");
-    m_inputMessage = new QLineEdit();    
+    m_inputMessage = new QLineEdit();
     m_inputMessage->setContentsMargins(2, 2, 2, 2);
     m_searchButton = initButton(QStyle::SP_ArrowForward, tr("Search"), this, SLOT(search()), inputLayout);
     inputLayout->addWidget(m_searchButton);
@@ -203,7 +203,7 @@ void Library::download(Song* song) {
                 m_searchButton->setEnabled(false);
                 m_streamClient->setOperation(OP_DOWNLOAD);
                 m_streamClient->setDownloadSong(song);
-                m_streamClient->RunThread();                
+                m_streamClient->RunThread();
             }
         } else {
             Logger::getInstance()->log(m_streamClient->getId(), "ALREADY IN PLAYLIST", LOG_LEVEL_INFO);

@@ -56,7 +56,7 @@ void StreamMediaClient::createFolderStructure(std::string newPath) {
         }
     }
     if (status == -1) {
-        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Could not Create directory.", LOG_LEVEL_FATAL);
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Could not Create directory, maybe already exists.", LOG_LEVEL_ERROR);
     }
 }
 

@@ -24,9 +24,11 @@ MediaApp::MediaApp() : QWidget(), m_libraryOpened(false) {
     m_player = new Player(this);
     m_playlist = new Playlist(this);
     m_albumWidget = new AlbumWidget(this);
+    m_albumWidget->LoadImage("Player", "The");    
+    m_albumWidget->setGeometry(46, 16, 300, 300);
 
     connect(m_player, SIGNAL(positionChanged()), this, SLOT(onPositionChanged()));
-    connect(m_player, SIGNAL(stateChanged()), this, SLOT(onStateChanged()));
+    connect(m_player, SIGNAL(stateChanged()), this, SLOT(onStateChanged()));    
 
     m_baseDir = QLatin1String(".");
 
@@ -81,7 +83,7 @@ void MediaApp::openFile(Song* song) {
         m_albumWidget->setGeometry(46, 16, 300, 300);
         m_albumWidget->setVisible(true);
     } else {
-        m_albumWidget->clear();
+        //m_albumWidget->clear();
         m_albumWidget->setVisible(false);
         m_player->setVisible(true);
     }
@@ -106,7 +108,6 @@ void MediaApp::open() {
             }
         }
     }
-
 }
 
 void MediaApp::openLibrary() {
@@ -246,8 +247,9 @@ void MediaApp::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & tip, QObject *dstobj, const char *slot_method, QLayout *layout) {
-    QToolButton *button = new QToolButton;
+QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & tip, QObject* dstobj,
+                                  const char* slot_method, QLayout* layout) {
+    QToolButton* button = new QToolButton;
     button->setIcon(style()->standardIcon(icon));
     button->setIconSize(QSize(22, 22));
     button->setToolTip(tip);
@@ -258,7 +260,7 @@ QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & t
 }
 
 void MediaApp::createUI(QBoxLayout *mainLayout) {
-    QVBoxLayout *appLayout = new QVBoxLayout;
+    QVBoxLayout* appLayout = new QVBoxLayout;
     appLayout->setContentsMargins(0, 0, 0, 0);
     appLayout->addWidget(m_player);
 
@@ -279,13 +281,13 @@ void MediaApp::createUI(QBoxLayout *mainLayout) {
 
     connect(m_volumeSlider, SIGNAL(sliderMoved(int)), m_player, SLOT(setVolume(int)));
 
-    QGridLayout *posLayout = new QGridLayout;
+    QGridLayout* posLayout = new QGridLayout;
     posLayout->setContentsMargins(2, 0, 2, 0);
     posLayout->addWidget(m_positionLabel, 1, 0);
     posLayout->addWidget(m_positionSlider, 1, 1, 1, 2);
     appLayout->addLayout(posLayout);
 
-    QHBoxLayout *btnLayout = new QHBoxLayout();
+    QHBoxLayout* btnLayout = new QHBoxLayout();
     btnLayout->addStretch();
 
     m_openButton = initButton(QStyle::SP_DialogOpenButton, tr("Open File"), this, SLOT(open()), btnLayout);
@@ -304,6 +306,7 @@ void MediaApp::createUI(QBoxLayout *mainLayout) {
 
     btnLayout->addWidget(m_volumeLabel);
     btnLayout->addWidget(m_volumeSlider);
+    
     appLayout->addLayout(btnLayout);
     mainLayout->addLayout(appLayout);
     m_playlist->setMaximumWidth(300);

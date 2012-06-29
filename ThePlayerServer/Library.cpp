@@ -187,6 +187,7 @@ bool Library::search(std::string pattern) {
         std::cerr << "Search exception: " << e.what() << std::endl;
         return false;
     }
+    
     if (result == NULL) {
         std::cerr << "NULL search result" << std::endl;
         return false;

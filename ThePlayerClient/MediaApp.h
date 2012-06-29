@@ -48,7 +48,7 @@ private Q_SLOTS:
     void prev();
     void next();
     void openLibrary();
-    void toggleFullScreen();
+    void toggleFullScreen();        
 
     void onStateChanged();
     void onPositionChanged();

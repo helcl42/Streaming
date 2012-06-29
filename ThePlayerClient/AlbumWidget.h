@@ -9,27 +9,36 @@
 #define	ALBUMWIDGET_H
 
 #include <QLabel>
+#include <QPixmap>
 #include <QMap>
+#include <iostream>
 
 #include "CoverDownloader.h"
 
-class AlbumWidget : public QLabel {
+class AlbumWidget : public QWidget {
+    Q_OBJECT
 private:
+    CoverDownloader m_cd;
     QMap<QString, QImage*> m_cache;
-    CoverDownloader* m_cd;
-    
+    QPixmap m_pixmap;
+
     QImage* fromCache(QString name);
     QImage* fromDirCache(QString name);
-    QImage* fromInternet(QString artist, QString album);    
-    
-    void    cache(QString name, QImage * img);
+    void    fromInternet(QString artist, QString album);
+
+    void cache(QString name, QImage* img);
+
+private slots:
+    void updatePixmap(const QImage& image);
+
+protected:
+    void paintEvent(QPaintEvent *event);
 
 public:
-    AlbumWidget(QWidget * parent = NULL);
-    void LoadImage(QString album, QString artist);        
+    AlbumWidget(QWidget* parent = NULL);
     virtual ~AlbumWidget();
-    
-    void    fromInternetCallback(std::string name, std::string path);
+
+    void LoadImage(QString album, QString artist);    
 };
 
 

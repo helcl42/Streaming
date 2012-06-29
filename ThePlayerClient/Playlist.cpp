@@ -103,7 +103,7 @@ void Playlist::insertTableRow(Song* song) {
     setItem(row, 1, lengthItem);        
 }
 
-void Playlist::mouseDoubleClickEvent(QMouseEvent* event) {
+void Playlist::mouseDoubleClickEvent(QMouseEvent* /*event*/) {
     std::cout << "Opening: " << m_playlist[currentRow()].getUrl() << std::endl;
     MediaApp::getInstance()->openFile(&m_playlist[currentRow()]);
 }
