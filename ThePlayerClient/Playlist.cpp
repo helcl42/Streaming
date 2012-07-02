@@ -71,22 +71,21 @@ void Playlist::insert(std::vector<Song*> & songVect) {
     print();
 }
 
-bool Playlist::isEmpty() {
+bool Playlist::isEmpty() const {
     return m_playlist.empty();
 }
 
 void Playlist::removeSelected() {
-    QList<QTableWidgetItem*> selected = selectedItems();    
-    int row = 0;
-    for (int i = 0; i < selected.size(); i++) {
+    QList<QTableWidgetItem*> selected = selectedItems();        
+    for (int i = 0, row = 0; i < selected.size(); i++) {
         row = selected.at(i)->row();
         removeRow(row);        
         m_playlist.erase(m_playlist.begin() + row);
     }
 }
 
-bool Playlist::isInPlaylist(Song* song) {
-    std::vector<Song>::iterator iter;
+bool Playlist::isInPlaylist(Song* song) const {
+    std::vector<Song>::const_iterator iter;
     for (iter = m_playlist.begin(); iter != m_playlist.end(); ++iter) {
         if ((*iter).getId() == song->getId()) {
             return true;
@@ -97,7 +96,6 @@ bool Playlist::isInPlaylist(Song* song) {
 
 void Playlist::print() {
     std::vector<Song>::iterator iter;
-
     for (iter = m_playlist.begin(); iter != m_playlist.end(); ++iter) {
         std::cout << "album: " << (*iter).getAlbum() << " title: "
                 << (*iter).getTitle() << " length: " << (*iter).getLength() << std::endl;
@@ -109,6 +107,7 @@ void Playlist::insertTableRow(Song* song) {
     QTableWidgetItem* nameItem = new QTableWidgetItem();
     nameItem->setText(QString::fromStdString(song->getTitle()));
     QTableWidgetItem* lengthItem = new QTableWidgetItem();
+    //TODO
     //lengthItem->setText(QString::fromStdString(song->getLength()));
     lengthItem->setText("--:--");
     insertRow(row);

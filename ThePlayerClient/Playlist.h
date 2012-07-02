@@ -27,7 +27,10 @@ class MediaApp;
 class Playlist : public QTableWidget {
 private:
     std::vector<Song> m_playlist;
-    unsigned int      m_position;
+    unsigned int m_position;
+
+protected:
+    void insertTableRow(Song* song);
 
 public:
     Playlist(QWidget* parent);
@@ -41,10 +44,9 @@ public:
     void insert(Song *pli);
     void insert(std::vector<Song*> & vec);
     void removeSelected();
-    bool isInPlaylist(Song* song);
+    bool isInPlaylist(Song* song) const;
     void print();
-    void insertTableRow(Song* song);
-    bool isEmpty();
+    bool isEmpty() const;
 
     void mouseDoubleClickEvent(QMouseEvent* event);
 };
