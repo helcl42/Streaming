@@ -54,7 +54,7 @@ void Player::setUri(const QString & uri) {
     }
 }
 
-QTime Player::position() const {
+QTime Player::getPosition() const {
     if (m_pipeline) {
         //here we query the pipeline about its position
         //and we request that the result is returned in time format
@@ -76,7 +76,7 @@ void Player::setPosition(const QTime & pos) {
     m_pipeline->sendEvent(evt);
 }
 
-int Player::volume() const {
+int Player::getVolume() const {
     if (m_pipeline) {
         QGst::StreamVolumePtr svp = m_pipeline.dynamicCast<QGst::StreamVolume > ();
 
@@ -98,7 +98,7 @@ void Player::setVolume(int volume) {
     }
 }
 
-QTime Player::length() const {
+QTime Player::getLength() const {
     if (m_pipeline) {
         //here we query the pipeline about the content's duration
         //and we request that the result is returned in time format
@@ -110,7 +110,7 @@ QTime Player::length() const {
     }
 }
 
-QGst::State Player::state() const {
+QGst::State Player::getState() const {
     return m_pipeline ? m_pipeline->currentState() : QGst::StateNull;
 }
 

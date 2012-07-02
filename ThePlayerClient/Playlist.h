@@ -40,7 +40,7 @@ public:
     int  getActualPosition() const;
     void insert(Song *pli);
     void insert(std::vector<Song*> & vec);
-    void deleteSong(int id);
+    void removeSelected();
     bool isInPlaylist(Song* song);
     void print();
     void insertTableRow(Song* song);

@@ -23,14 +23,14 @@ public:
     Player(QWidget *parent = 0);
     ~Player();
 
-    void setUri(const QString & uri);
+    void        setUri(const QString & uri);
 
-    QTime position() const;
-    void setPosition(const QTime & pos);
-    int volume() const;
+    QTime       getPosition() const;
+    void        setPosition(const QTime & pos);
+    int         getVolume() const;
 
-    QTime length() const;
-    QGst::State state() const;
+    QTime       getLength() const;
+    QGst::State getState() const;
 
 public Q_SLOTS:
     void play();
@@ -47,7 +47,7 @@ private:
     void handlePipelineStateChange(const QGst::StateChangedMessagePtr & scm);
 
     QGst::PipelinePtr m_pipeline;
-    QTimer m_positionTimer;    
+    QTimer            m_positionTimer;    
 };
 
 

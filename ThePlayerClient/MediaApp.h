@@ -43,6 +43,10 @@ public:
     Player*      getPlayerInstance() const;
     AlbumWidget* getAlbumWidgetInstance() const;
     
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void closeEvent(QCloseEvent* close);
+    
 private Q_SLOTS:
     void open();
     void prev();

@@ -12,8 +12,9 @@ Playlist::Playlist(QWidget* parent) : QTableWidget(0, 2, parent), m_position(0) 
     setHorizontalHeaderLabels(labels);
     horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
     setColumnWidth(1, 50);
-    horizontalHeader()->setContentsMargins(0, 0, 0, 0);    
+    horizontalHeader()->setContentsMargins(0, 0, 0, 0);
     verticalHeader()->setDefaultSectionSize(18);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
     setShowGrid(false);
 }
 
@@ -25,12 +26,16 @@ Song* Playlist::getActual() {
 }
 
 Song* Playlist::getNext() {
-    if (m_position < m_playlist.size() - 1) {
-        m_position++;
+    if (!isEmpty()) {
+        if (m_position < m_playlist.size() - 1) {
+            m_position++;
+        } else {
+            m_position = 0;
+        }
+        return &m_playlist[m_position];
     } else {
-        m_position = 0;
+        return NULL;
     }
-    return &m_playlist[m_position];
 }
 
 int Playlist::getActualPosition() const {
@@ -38,12 +43,16 @@ int Playlist::getActualPosition() const {
 }
 
 Song* Playlist::getPrevious() {
-    if (m_position == 0) {
-        m_position = m_playlist.size() - 1;
+    if (!isEmpty()) {
+        if (m_position == 0) {
+            m_position = m_playlist.size() - 1;
+        } else {
+            m_position--;
+        }
+        return &m_playlist[m_position];
     } else {
-        m_position--;
+        return NULL;
     }
-    return &m_playlist[m_position];
 }
 
 void Playlist::insert(Song* song) {
@@ -66,16 +75,20 @@ bool Playlist::isEmpty() {
     return m_playlist.empty();
 }
 
-void Playlist::deleteSong(int pos) {
-    std::vector<Song>::iterator iter;
-    iter = m_playlist.begin() + pos;
-    m_playlist.erase(iter++);
+void Playlist::removeSelected() {
+    QList<QTableWidgetItem*> selected = selectedItems();    
+    int row = 0;
+    for (int i = 0; i < selected.size(); i++) {
+        row = selected.at(i)->row();
+        removeRow(row);        
+        m_playlist.erase(m_playlist.begin() + row);
+    }
 }
 
 bool Playlist::isInPlaylist(Song* song) {
-    std::vector<Song>::iterator iter;    
-    for(iter = m_playlist.begin(); iter != m_playlist.end(); ++iter) {
-        if((*iter).getId() == song->getId()) {
+    std::vector<Song>::iterator iter;
+    for (iter = m_playlist.begin(); iter != m_playlist.end(); ++iter) {
+        if ((*iter).getId() == song->getId()) {
             return true;
         }
     }
@@ -98,9 +111,9 @@ void Playlist::insertTableRow(Song* song) {
     QTableWidgetItem* lengthItem = new QTableWidgetItem();
     //lengthItem->setText(QString::fromStdString(song->getLength()));
     lengthItem->setText("--:--");
-    insertRow(row);      
-    setItem(row, 0, nameItem);    
-    setItem(row, 1, lengthItem);        
+    insertRow(row);
+    setItem(row, 0, nameItem);
+    setItem(row, 1, lengthItem);
 }
 
 void Playlist::mouseDoubleClickEvent(QMouseEvent* /*event*/) {

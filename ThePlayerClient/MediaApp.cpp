@@ -24,11 +24,11 @@ MediaApp::MediaApp() : QWidget(), m_libraryOpened(false) {
     m_player = new Player(this);
     m_playlist = new Playlist(this);
     m_albumWidget = new AlbumWidget(this);
-    m_albumWidget->LoadImage("Player", "The");    
+    m_albumWidget->LoadImage("Player", "The");
     m_albumWidget->setGeometry(46, 16, 300, 300);
 
     connect(m_player, SIGNAL(positionChanged()), this, SLOT(onPositionChanged()));
-    connect(m_player, SIGNAL(stateChanged()), this, SLOT(onStateChanged()));    
+    connect(m_player, SIGNAL(stateChanged()), this, SLOT(onStateChanged()));
 
     m_baseDir = QLatin1String(".");
 
@@ -61,6 +61,10 @@ MediaApp::~MediaApp() {
 }
 
 void MediaApp::openFile(Song* song) {
+    if(song == NULL) {
+        return;
+    }
+    
     m_baseDir = QFileInfo(QString::fromStdString(song->getUrl())).path();
 
     m_player->stop();
@@ -82,8 +86,7 @@ void MediaApp::openFile(Song* song) {
         m_albumWidget->LoadImage(artistName, albumName);
         m_albumWidget->setGeometry(46, 16, 300, 300);
         m_albumWidget->setVisible(true);
-    } else {
-        //m_albumWidget->clear();
+    } else {       
         m_albumWidget->setVisible(false);
         m_player->setVisible(true);
     }
@@ -98,7 +101,7 @@ void MediaApp::open() {
             song->setId(m_playlist->getActualPosition() + 1);
             song->setTitle(Song::getSongTitleFromPath(fileNames.at(i).toStdString()));
             song->setUrl(fileNames.at(i).toStdString());
-            song->setLength(m_player->length().toString("hh:mm:ss").toStdString());
+            song->setLength(m_player->getLength().toString("hh:mm:ss").toStdString());
             song->setFromLibrary(false);
             song->setAudio(Song::findOutIfAudioMedia(song));
             m_playlist->insert(song);
@@ -163,7 +166,7 @@ void MediaApp::toggleFullScreen() {
 }
 
 void MediaApp::onStateChanged() {
-    QGst::State newState = m_player->state();
+    QGst::State newState = m_player->getState();
     m_playButton->setEnabled(newState != QGst::StatePlaying);
     m_pauseButton->setEnabled(newState == QGst::StatePlaying);
     m_nextButton->setEnabled(newState == QGst::StatePlaying);
@@ -172,7 +175,7 @@ void MediaApp::onStateChanged() {
     m_positionSlider->setEnabled(newState != QGst::StateNull);
     m_volumeSlider->setEnabled(newState != QGst::StateNull);
     m_volumeLabel->setEnabled(newState != QGst::StateNull);
-    m_volumeSlider->setValue(m_player->volume());
+    m_volumeSlider->setValue(m_player->getVolume());
 
     if (newState == QGst::StateNull) {
         onPositionChanged();
@@ -183,9 +186,9 @@ void MediaApp::onPositionChanged() {
     QTime length(0, 0);
     QTime curpos(0, 0);
 
-    if (m_player->state() != QGst::StateReady && m_player->state() != QGst::StateNull) {
-        length = m_player->length();
-        curpos = m_player->position();
+    if (m_player->getState() != QGst::StateReady && m_player->getState() != QGst::StateNull) {
+        length = m_player->getLength();
+        curpos = m_player->getPosition();
     }
 
     m_positionLabel->setText(curpos.toString("hh:mm:ss.zzz") + "/" + length.toString("hh:mm:ss.zzz"));
@@ -207,7 +210,7 @@ void MediaApp::onPositionChanged() {
  * @param value
  */
 void MediaApp::setPosition(int value) {
-    uint length = -m_player->length().msecsTo(QTime());
+    uint length = -m_player->getLength().msecsTo(QTime());
     if (length != 0 && value > 0) {
         QTime pos;
         pos = pos.addMSecs(length * (value / 1000.0));
@@ -231,6 +234,48 @@ void MediaApp::showControls(bool show) {
     m_playlist->setVisible(show);
 }
 
+void MediaApp::closeEvent(QCloseEvent* /* close */) {
+    if (m_libraryOpened) {
+        Library* lib = Library::getInstance();
+        lib->close();
+    }
+    std::cout << "BYE!" << std::endl;
+}
+
+void MediaApp::keyPressEvent(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_Space:
+            m_positionSlider->setFocus();
+            if (m_player->getState() == QGst::StatePlaying) {
+                m_player->pause();
+            } else {
+                m_player->play();
+            }
+            break;
+        case Qt::Key_Left:          
+            m_playlist->setFocus();
+            openFile(m_playlist->getPrevious());            
+            break;
+        case Qt::Key_Right:           
+            m_playlist->setFocus();
+            openFile(m_playlist->getNext());            
+            break;
+        case Qt::Key_Up:
+            m_volumeSlider->setFocus();
+            m_player->setVolume(m_player->getVolume() + 1);
+            break;
+        case Qt::Key_Down:
+            m_volumeSlider->setFocus();
+            m_player->setVolume(m_player->getVolume() - 1);            
+            break;
+        case Qt::Key_Delete:
+            m_playlist->removeSelected();     
+            break;
+        default:
+            QWidget::keyPressEvent(event);
+    }
+}
+
 void MediaApp::hideControls() {
     showControls(false);
 }
@@ -247,8 +292,7 @@ void MediaApp::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & tip, QObject* dstobj,
-                                  const char* slot_method, QLayout* layout) {
+QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & tip, QObject* dstobj, const char* slot_method, QLayout* layout) {
     QToolButton* button = new QToolButton;
     button->setIcon(style()->standardIcon(icon));
     button->setIconSize(QSize(22, 22));
@@ -306,7 +350,7 @@ void MediaApp::createUI(QBoxLayout *mainLayout) {
 
     btnLayout->addWidget(m_volumeLabel);
     btnLayout->addWidget(m_volumeSlider);
-    
+
     appLayout->addLayout(btnLayout);
     mainLayout->addLayout(appLayout);
     m_playlist->setMaximumWidth(300);

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Library.h'
 **
-** Created: Wed Jun 27 00:48:34 2012
+** Created: Mon Jul 2 13:28:47 2012
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_Library[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -34,7 +34,6 @@ static const uint qt_meta_data_Library[] = {
        9,    8,    8,    8, 0x08,
       20,   18,    8,    8, 0x08,
       71,   66,    8,    8, 0x08,
-      87,    8,    8,    8, 0x08,
 
        0        // eod
 };
@@ -42,7 +41,7 @@ static const uint qt_meta_data_Library[] = {
 static const char qt_meta_stringdata_Library[] = {
     "Library\0\0search()\0,\0"
     "selectFromTree(QItemSelection,QItemSelection)\0"
-    "song\0download(Song*)\0downloadCallback()\0"
+    "song\0download(Song*)\0"
 };
 
 void Library::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -54,7 +53,6 @@ void Library::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 0: _t->search(); break;
         case 1: _t->selectFromTree((*reinterpret_cast< const QItemSelection(*)>(_a[1])),(*reinterpret_cast< const QItemSelection(*)>(_a[2]))); break;
         case 2: _t->download((*reinterpret_cast< Song*(*)>(_a[1]))); break;
-        case 3: _t->downloadCallback(); break;
         default: ;
         }
     }
@@ -92,9 +90,9 @@ int Library::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 3;
     }
     return _id;
 }

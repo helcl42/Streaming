@@ -15,7 +15,7 @@ CoverDownloader::~CoverDownloader() {
 
 void CoverDownloader::downloadCover() {    
     if (!isRunning()) {
-        Logger::getInstance()->log(0, "DOWNLOAD THREAD NOT RUNNING", LOG_LEVEL_ERROR);
+        Logger::getInstance()->log(0, "DOWNLOAD THREAD NOT RUNNING", LOG_LEVEL_INFO);
         start(LowPriority);
     } else {
         m_condition.wakeOne();
@@ -128,7 +128,7 @@ void CoverDownloader::download() {
 
 void CoverDownloader::saveImage(std::string url, std::string path) {
     std::string host = HttpClientSocket::getHostFromUrl(url);
-    std::string serverPath = HttpClientSocket::getServerPathFromUrl(url);
+    std::string serverPath = HttpClientSocket::getServerPathFromUrl(url);      
 
     HttpClientSocket httpSocket(host, 80);
     httpSocket.connectSocket();

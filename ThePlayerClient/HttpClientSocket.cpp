@@ -146,10 +146,11 @@ std::string HttpClientSocket::getHostFromUrl(std::string url) {
 }
 
 std::string HttpClientSocket::getServerPathFromUrl(std::string url) {
-    std::string serverPath;
-    for (unsigned int i = url.size() - 1, count = 0; i > 0; i--) {
-        if (url[i] == '/')
+    std::string serverPath;    
+    for (unsigned int i = 0, count = 0; i < url.size(); i++) {
+        if (url[i] == '/') {
             count++;
+        }
         if (count >= 3) {
             serverPath = url.substr(i, url.size() - 1);
             //std::cout << "NEW SERVER PATH: " << serverPath << std::endl;
