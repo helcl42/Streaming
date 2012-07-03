@@ -270,23 +270,23 @@ void Library::setSatusMessage(std::string str) {
     m_statusMessasge->setText(QString::fromStdString(str));
 }
 
-//TODO leaks
-
 void Library::clearData() {
-    /*     
-        for (std::vector<Artist* >::iterator art = m_artists.begin(); art != m_artists.end(); ++art) {
-            for (std::vector<Album* >::iterator alb = (*art)->m_albums.begin(); alb != (*art)->m_albums.end(); ++alb) {
-                for (std::vector<Song*>::iterator sng = (*alb)->m_songs.begin(); sng != (*alb)->m_songs.end(); ++sng) {
-                    SAFE_DELETE(*sng);
-                }
-                (*alb)->m_songs.clear();
-                SAFE_DELETE(*alb);
+
+    for (std::vector<Artist* >::iterator art = m_artists.begin(); art != m_artists.end(); ++art) {
+        for (std::vector<Album* >::iterator alb = (*art)->m_albums.begin(); alb != (*art)->m_albums.end(); ++alb) {
+            for (std::vector<Song*>::iterator sng = (*alb)->m_songs.begin(); sng != (*alb)->m_songs.end(); ++sng) {
+                SAFE_DELETE(*sng);
             }
-            (*art)->m_albums.clear();
-            SAFE_DELETE(*art);
+            (*alb)->m_songs.clear();
+            SAFE_DELETE(*alb);
         }
-     */
+        (*art)->m_albums.clear();
+        SAFE_DELETE(*art);
+    }
+
     m_artists.clear();
+    m_albums.clear();
+    m_songs.clear();
 }
 
 void Library::enableSearch(bool val) {
