@@ -5,6 +5,7 @@
 
 #include "AlbumWidget.h"
 #include "CoverDownloader.h"
+#include "MediaApp.h"
 
 AlbumWidget::AlbumWidget(QWidget* parent) : QWidget(parent) {
     qRegisterMetaType<QImage > ("QImage");
@@ -17,7 +18,7 @@ AlbumWidget::AlbumWidget(QWidget* parent) : QWidget(parent) {
 AlbumWidget::~AlbumWidget() {
     for (QMap<QString, QImage *>::iterator i = m_cache.begin(); i != m_cache.end(); ++i) {
         delete *i;
-    }    
+    }
 }
 
 void AlbumWidget::updatePixmap(const QImage& image) {
@@ -36,6 +37,23 @@ void AlbumWidget::paintEvent(QPaintEvent *) {
     }
 
     painter.drawPixmap(0, 0, m_pixmap);
+
+    Song* actualSong = MediaApp::getInstance()->getPlaylistInstance()->getActual();
+    if (actualSong != NULL) {
+        m_nowPlaying = QString::fromStdString(actualSong->getTitle());
+    } else {
+        m_nowPlaying = tr("ThePlayer");
+    }
+    QFontMetrics metrics = painter.fontMetrics();
+    int textWidth = metrics.width(m_nowPlaying);
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(0, 0, 0, 127));
+    painter.drawRect((width() - textWidth) / 2 - 5, 0, textWidth + 10, metrics.lineSpacing() + 5);
+    painter.setPen(Qt::white);
+
+    painter.drawText((width() - textWidth) / 2, metrics.leading() + metrics.ascent() + 2, m_nowPlaying);
+
 }
 
 void AlbumWidget::LoadImage(QString album, QString artist) {
@@ -49,7 +67,7 @@ void AlbumWidget::LoadImage(QString album, QString artist) {
         cache(name, img);
     } else {
         fromInternet(artist, album);
-        std::cout << "Internet" << std::endl;        
+        std::cout << "Internet" << std::endl;
         return;
     }
 

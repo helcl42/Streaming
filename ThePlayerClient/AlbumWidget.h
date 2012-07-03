@@ -21,6 +21,7 @@ private:
     CoverDownloader m_cd;
     QMap<QString, QImage*> m_cache;
     QPixmap m_pixmap;
+    QString m_nowPlaying;
 
     QImage* fromCache(QString name);
     QImage* fromDirCache(QString name);

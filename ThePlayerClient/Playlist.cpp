@@ -22,7 +22,11 @@ Playlist::~Playlist() {
 }
 
 Song* Playlist::getActual() {
-    return &m_playlist[m_position];
+    if (!isEmpty()) {
+        return &m_playlist[m_position];
+    } else {
+        return NULL;
+    }
 }
 
 Song* Playlist::getNext() {
@@ -76,10 +80,10 @@ bool Playlist::isEmpty() const {
 }
 
 void Playlist::removeSelected() {
-    QList<QTableWidgetItem*> selected = selectedItems();        
+    QList<QTableWidgetItem*> selected = selectedItems();
     for (int i = 0, row = 0; i < selected.size(); i++) {
         row = selected.at(i)->row();
-        removeRow(row);        
+        removeRow(row);
         m_playlist.erase(m_playlist.begin() + row);
     }
 }
@@ -115,9 +119,10 @@ void Playlist::insertTableRow(Song* song) {
     setItem(row, 1, lengthItem);
 }
 
-void Playlist::mouseDoubleClickEvent(QMouseEvent* /*event*/) {
-    std::cout << "Opening: " << m_playlist[currentRow()].getUrl() << std::endl;
-    MediaApp::getInstance()->openFile(&m_playlist[currentRow()]);
+void Playlist::mouseDoubleClickEvent(QMouseEvent* /*event*/) {    
+    m_position = currentRow();    
+    std::cout << "Opening: " << m_playlist[m_position].getUrl() << std::endl;
+    MediaApp::getInstance()->openFile(&m_playlist[m_position]);
 }
 
 

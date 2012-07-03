@@ -16,6 +16,7 @@
 #include "Library.h"
 #include "Playlist.h"
 #include "AlbumWidget.h"
+#include "VolumeSlider.h"
 
 class Player;
 class Playlist;
@@ -64,6 +65,7 @@ private Q_SLOTS:
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 private:
      MediaApp();
@@ -81,7 +83,7 @@ private:
     QToolButton*     m_nextButton;
     QToolButton*     m_openLibrary;
     QSlider*         m_positionSlider;
-    QSlider*         m_volumeSlider;
+    VolumeSlider*    m_volumeSlider;
     QLabel*          m_positionLabel;
     QLabel*          m_volumeLabel;
    
@@ -92,7 +94,7 @@ private:
     Playlist*        m_playlist;           
     bool             m_libraryOpened;   
     
-    static MediaApp* m_instance;    
+    static MediaApp* m_instance;      
 };
 
 

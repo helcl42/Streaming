@@ -19,6 +19,7 @@
       <itemPath>Thread.h</itemPath>
       <itemPath>Types.h</itemPath>
       <itemPath>Utils.h</itemPath>
+      <itemPath>VolumeSlider.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"

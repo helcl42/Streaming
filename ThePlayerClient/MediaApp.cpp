@@ -61,10 +61,10 @@ MediaApp::~MediaApp() {
 }
 
 void MediaApp::openFile(Song* song) {
-    if(song == NULL) {
+    if (song == NULL) {
         return;
     }
-    
+
     m_baseDir = QFileInfo(QString::fromStdString(song->getUrl())).path();
 
     m_player->stop();
@@ -86,7 +86,7 @@ void MediaApp::openFile(Song* song) {
         m_albumWidget->LoadImage(artistName, albumName);
         m_albumWidget->setGeometry(46, 16, 300, 300);
         m_albumWidget->setVisible(true);
-    } else {       
+    } else {
         m_albumWidget->setVisible(false);
         m_player->setVisible(true);
     }
@@ -242,6 +242,14 @@ void MediaApp::closeEvent(QCloseEvent* /* close */) {
     std::cout << "BYE!" << std::endl;
 }
 
+void MediaApp::wheelEvent(QWheelEvent *event) {
+    int numDegrees = event->delta() / 8;
+    double numSteps = numDegrees / 7.5f;     
+    if (m_player->getVolume() > 0 ) {
+        m_volumeSlider->moveSlider(m_player->getVolume() + numSteps);
+    }
+}
+
 void MediaApp::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
         case Qt::Key_Space:
@@ -252,24 +260,24 @@ void MediaApp::keyPressEvent(QKeyEvent *event) {
                 m_player->play();
             }
             break;
-        case Qt::Key_Left:          
+        case Qt::Key_Left:
             m_playlist->setFocus();
-            openFile(m_playlist->getPrevious());            
+            openFile(m_playlist->getPrevious());
             break;
-        case Qt::Key_Right:           
+        case Qt::Key_Right:
             m_playlist->setFocus();
-            openFile(m_playlist->getNext());            
+            openFile(m_playlist->getNext());
             break;
         case Qt::Key_Up:
-            m_volumeSlider->setFocus();
-            m_player->setVolume(m_player->getVolume() + 1);
+            m_volumeSlider->moveSlider(m_player->getVolume() + 2);
             break;
         case Qt::Key_Down:
-            m_volumeSlider->setFocus();
-            m_player->setVolume(m_player->getVolume() - 1);            
+            if (m_player->getVolume() > 0) {
+                m_volumeSlider->moveSlider(m_player->getVolume() - 1);
+            }
             break;
         case Qt::Key_Delete:
-            m_playlist->removeSelected();     
+            m_playlist->removeSelected();
             break;
         default:
             QWidget::keyPressEvent(event);
@@ -317,7 +325,7 @@ void MediaApp::createUI(QBoxLayout *mainLayout) {
 
     connect(m_positionSlider, SIGNAL(sliderMoved(int)), this, SLOT(setPosition(int)));
 
-    m_volumeSlider = new QSlider(Qt::Horizontal);
+    m_volumeSlider = new VolumeSlider(Qt::Horizontal);
     m_volumeSlider->setTickPosition(QSlider::TicksLeft);
     m_volumeSlider->setTickInterval(2);
     m_volumeSlider->setMaximum(10);
