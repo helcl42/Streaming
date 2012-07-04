@@ -19,7 +19,7 @@ StreamServer::~StreamServer() {
 
 void StreamServer::startServer() {
     int socketId = 0;
-    
+
     m_pCleaner->RunThread();
     Logger::getInstance()->log(m_pServerSocket->getSocketId(), "SERVER STARTED", LOG_LEVEL_INFO);
 
@@ -42,7 +42,7 @@ void StreamServer::startServer() {
     for (int i = 0; i < m_iThreadCount; i++)
         m_pThreads[i]->WaitForThreadToExit();
 
-    //	closeSocket();        
+    shutdown();
 }
 
 void StreamServer::reallocThreads() {
@@ -57,7 +57,7 @@ void StreamServer::reallocThreads() {
 }
 
 void StreamServer::shutdown() {
-    Logger::getInstance()->log(m_pServerSocket->getSocketId(), "Closing socket", LOG_LEVEL_INFO);
+    Logger::getInstance()->log(m_pServerSocket->getSocketId(), "CLOSING SERVER SOCKET", LOG_LEVEL_INFO);
     m_pServerSocket->closeSocket();
 }
 

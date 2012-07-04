@@ -24,8 +24,8 @@
 
 class Library {
 private:    
-    sql::Connection* m_connection;
-    std::vector<Artist *> m_library;
+    sql::Connection*        m_connection;
+    std::vector<Artist *>   m_library;
 
     sql::PreparedStatement* getArtistNameById;
 

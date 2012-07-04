@@ -17,11 +17,10 @@ void StreamServerThread::sendRawData(char* buffer, int dataLength) {
     int sendDataLength = 0;
 
     do {
-        sendDataLength = write(m_iSocketId, static_cast<void*> (buffer), dataLength);
+        sendDataLength += write(m_iSocketId, static_cast<void*> (buffer), dataLength);
         if (sendDataLength < 0) {
             Logger::getInstance()->log(m_iSocketId, "Content of send message has invalid size.", LOG_LEVEL_ERROR);
-        }
-        sendDataLength += sendDataLength;
+        }        
     } while (sendDataLength < dataLength);
 }
 

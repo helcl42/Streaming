@@ -24,9 +24,9 @@
 
 class TCPClientSocket {
 protected:
-    int m_iSocketId;
+    int         m_iSocketId;
     const char* m_cHostname;
-    int m_iPort;
+    int         m_iPort;
 
 public:
     TCPClientSocket(const char* hostname, int port);

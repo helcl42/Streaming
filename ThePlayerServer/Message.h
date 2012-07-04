@@ -34,15 +34,11 @@ typedef enum {
 
 struct Message {
     MessageType type;
-    char data[BUFFSIZE];
-    int dataSize;
-    int blockId;
+    char        data[BUFFSIZE];
+    int         dataSize;    
 
-    Message() {
-    }
-
-    ~Message() {
-    }
+    Message() {}
+    ~Message() {}
 };
 
 #endif	/* MESSAGE_H */

@@ -26,27 +26,23 @@ private:
     std::string m_title;
     std::string m_length;
     std::string m_url;
-    Album* m_album;
+    Album*      m_album;
     
-    bool m_fromLibrary;
-    bool m_isAudio;
+    bool        m_fromLibrary;
+    bool        m_isAudio;
     std::string m_albumName;
     std::string m_artistName;
 
 public:
 
-    Song() {
-    }
+    Song() {}
 
     Song(int id, std::string title, std::string length, std::string url, Album* album = NULL, bool fromLib = false, bool audio = false)
-    : m_id(id), m_title(title), m_length(length), m_url(url), m_album(album), m_fromLibrary(fromLib), m_isAudio(audio) {
-    }
+    : m_id(id), m_title(title), m_length(length), m_url(url), m_album(album), m_fromLibrary(fromLib), m_isAudio(audio) {}
 
-    Song(std::string title, std::string url) : m_title(title), m_url(url) {
-    }
+    Song(std::string title, std::string url) : m_title(title), m_url(url) {}
 
-    ~Song() {
-    }
+    ~Song() {}
 
     int getId() const {
         return m_id;
@@ -200,18 +196,15 @@ public:
 class Album {
 private:
     friend class Library;
-    int m_id;
-    std::string m_title;
-    Artist* m_artist;
-    std::vector<Song *> m_songs;
-
-    Album() {
-    }
-
-    Album(int id, std::string title, Artist * artist) : m_id(id), m_title(title), m_artist(artist) {
-    }
+    int                 m_id;
+    std::string         m_title;
+    Artist*             m_artist;
+    std::vector<Song *> m_songs;  
 
 public:
+     Album() {}
+
+     Album(int id, std::string title, Artist * artist) : m_id(id), m_title(title), m_artist(artist) {}
 
     ~Album() {
         for (std::vector<Song*>::iterator it = m_songs.begin(); it != m_songs.end(); it++) {
@@ -276,17 +269,14 @@ public:
 class Artist {
 private:
     friend class Library;
-    int m_id;
-    std::string m_name;
+    int                  m_id;
+    std::string          m_name;
     std::vector<Album *> m_albums;
 
-    Artist() {
-    }
-
-    Artist(int id, std::string name) : m_id(id), m_name(name) {
-    }
-
 public:
+    Artist() {}
+    
+    Artist(int id, std::string name) : m_id(id), m_name(name) {}
 
     ~Artist() {
         for (std::vector<Album *>::iterator it = m_albums.begin(); it != m_albums.end(); it++) {

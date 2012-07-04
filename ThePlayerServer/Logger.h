@@ -21,17 +21,17 @@ typedef enum {
     LOG_LEVEL_ERROR,
     LOG_LEVEL_FATAL,
     LOG_LEVEL_DATA
-} logLevel;
+} LogType;
 
 #define STD_DEBUG true
 
 class Logger {
 private:
-    static Logger* m_pInstance;
-    std::ofstream m_outFile;
-    bool m_bStdOutput;
+    static Logger*      m_pInstance;
+    std::ofstream       m_outFile;
+    bool                m_bStdOutput;
     pthread_mutexattr_t m_attr;
-    pthread_mutex_t m_mutex;
+    pthread_mutex_t     m_mutex;
 
     Logger();
 
@@ -39,12 +39,13 @@ public:
     static Logger* getInstance();
     virtual ~Logger();
 
-    void log(int socket, const std::string msg, logLevel level = LOG_LEVEL_WARNING);
-    void logData(int socket, const char* data, int size, logLevel level = LOG_LEVEL_DATA);
+    void log(int socket, const std::string msg, LogType level = LOG_LEVEL_WARNING);
+    void log(const std::string msg, LogType level = LOG_LEVEL_WARNING);
+    void logData(int socket, const char* data, int size, LogType level = LOG_LEVEL_DATA);
 
-    std::string createMessage(int socket, const std::string msg, logLevel level);
-    std::string getTime() const;
-    void deleteNewLines(std::string& s);
+    std::string createMessage(int socket, const std::string msg, LogType level);
+    std::string getTime();
+    void        deleteNewLines(std::string& s);
 };
 
 #endif	/* LOGGER_H */

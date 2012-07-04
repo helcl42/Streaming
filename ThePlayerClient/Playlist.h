@@ -27,7 +27,7 @@ class MediaApp;
 class Playlist : public QTableWidget {
 private:
     std::vector<Song> m_playlist;
-    unsigned int m_position;
+    unsigned int      m_position;
 
 protected:
     void insertTableRow(Song* song);

@@ -24,10 +24,10 @@
 
 class StreamServer {
 protected:
-    TCPServerSocket* m_pServerSocket;
-    CleanUpThread* m_pCleaner;
+    TCPServerSocket*     m_pServerSocket;
+    CleanUpThread*       m_pCleaner;
     StreamServerThread** m_pThreads;
-    int m_iThreadCount;
+    int                  m_iThreadCount;
 
 private:    
     friend class CleanUpThread;
