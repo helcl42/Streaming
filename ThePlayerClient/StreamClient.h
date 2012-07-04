@@ -38,7 +38,7 @@ public:
     ~StreamClient();
 
     bool     connectToServer();
-    void     shutdown();
+    bool     disconnect();
     
     void     sendRawData(char* data, int length);
     char*    receiveRawData();

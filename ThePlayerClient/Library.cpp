@@ -270,8 +270,13 @@ void Library::setSatusMessage(std::string str) {
     m_statusMessasge->setText(QString::fromStdString(str));
 }
 
-void Library::clearData() {
+void Library::closeEvent(QCloseEvent* /* close */) {
+    if (m_streamClient->isConnected()) {
+        m_streamClient->disconnect();
+    }    
+}
 
+void Library::clearData() {
     for (std::vector<Artist* >::iterator art = m_artists.begin(); art != m_artists.end(); ++art) {
         for (std::vector<Album* >::iterator alb = (*art)->m_albums.begin(); alb != (*art)->m_albums.end(); ++alb) {
             for (std::vector<Song*>::iterator sng = (*alb)->m_songs.begin(); sng != (*alb)->m_songs.end(); ++sng) {

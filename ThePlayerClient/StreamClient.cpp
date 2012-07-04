@@ -135,12 +135,12 @@ Message* StreamClient::receiveMessage() {
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Message could be incomplete.", LOG_LEVEL_ERROR);
         }
         dataLength -= partSize;
-        shift += partSize;        
+        shift += partSize;
     } while (dataLength > 0);
 
     Message* message = new Message();
     memcpy(message, byteMessage, sizeof (Message));
-    
+
     return message;
 }
 
@@ -149,7 +149,7 @@ Message* StreamClient::receiveMessage() {
  * function returns true if connection to
  * server was successfull
  */
-bool StreamClient::connectToServer() {    
+bool StreamClient::connectToServer() {
     Message* message = new Message();
     message->type = MESSAGE_CONNECT;
     sprintf(message->data, "%s", "connect me!");
@@ -177,12 +177,23 @@ bool StreamClient::connectToServer() {
     }
 }
 
-void StreamClient::setId(int id) {
-    m_iId = id;
+bool StreamClient::disconnect() {
+    Message* message = new Message();
+    message->type = MESSAGE_DISCONNECT;
+    sprintf(message->data, "%d", m_iId);
+    message->dataSize = 1;
+    if (!sendMessage(message)) {
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "COULD NOT SEND DISCONNECT MESSAGE", LOG_LEVEL_INFO);
+        SAFE_DELETE(message);
+        return false;
+    }
+    m_pClientSocket->closeSocket();
+    SAFE_DELETE(message);
+    return true;
 }
 
-void StreamClient::shutdown() {
-    m_pClientSocket->closeSocket();
+void StreamClient::setId(int id) {
+    m_iId = id;
 }
 
 int StreamClient::getId() const {

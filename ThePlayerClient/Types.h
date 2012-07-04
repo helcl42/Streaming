@@ -27,8 +27,11 @@ private:
     std::string m_length;
     std::string m_url;
     Album* m_album;
+    
     bool m_fromLibrary;
     bool m_isAudio;
+    std::string m_albumName;
+    std::string m_artistName;
 
 public:
 
@@ -77,12 +80,28 @@ public:
         m_url = url;
     }
 
-    Album * getAlbum() {
+    Album* getAlbum() {
         return m_album;
     }
 
     void setAlbum(Album* album) {
         m_album = album;
+    }
+    
+    void setAlbumName(std::string album) {
+        m_albumName = album;
+    }
+    
+    std::string getAlbumName() const {
+        return m_albumName;
+    }
+    
+    void setArtistName(std::string artist) {
+        m_artistName = artist;
+    }
+    
+    std::string getArtistName() const {
+        return m_artistName;
     }
 
     bool isFromLibrary() const {

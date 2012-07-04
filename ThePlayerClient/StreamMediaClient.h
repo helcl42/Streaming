@@ -13,7 +13,8 @@
 typedef enum {
     OP_CONNECT = 0,
     OP_QUERY,
-    OP_DOWNLOAD
+    OP_DOWNLOAD,
+    OP_DISCONNECT
 } Operation;
 
 class StreamMediaClient : public StreamClient {
@@ -38,13 +39,13 @@ public:
     bool queryLibrary();
     bool receiveQueryResult();
 
-    void        setDownloadSong(Song* song);
-    Song*       getDownloadSong() const;
+    void setDownloadSong(Song* song);
+    Song* getDownloadSong() const;
 
-    void        setOperation(Operation op);
-    Operation   getOperation() const;
+    void setOperation(Operation op);
+    Operation getOperation() const;
 
-    void        setQueryString(std::string str);
+    void setQueryString(std::string str);
     std::string getQueryString() const;
 };
 

@@ -29,56 +29,59 @@ class Library;
 class Playlist;
 class MediaApp;
 
-class Library : public QWidget
-{
+class Library : public QWidget {
     Q_OBJECT
-public:           
+public:
     static Library* getInstance();
-        
+
     virtual ~Library();
-    
+
     void connectToServer(std::string url, int port);
     void downloadCallback(bool succes);
     void searchCallback(bool success);
-    
+
     void enableSearch(bool val);
     void printQueryResutl();
     void clearData();
-    
+
     std::string getAlbumTitle(int songId);
     std::string getArtistName(int songId);
-    
+
     void setSatusMessage(std::string str);
-    
-private Q_SLOTS:
-    void search();    
-    void selectFromTree(const QItemSelection&, const QItemSelection&);     
-    void download(Song* song);    
+
+protected:
+    void closeEvent(QCloseEvent* close);
+
+    private 
+Q_SLOTS:
+    void search();
+    void selectFromTree(const QItemSelection&, const QItemSelection&);
+    void download(Song* song);
 
 private:
     friend class StreamMediaClient;
     Library();
-    
-    QToolButton* initButton(QStyle::StandardPixmap icon, const QString & tip, QObject *dstobj, const char *slot_method, QLayout *layout);
-    void         createUI(QBoxLayout *appLayout);
-    void         createModel();
 
-    QToolButton*         m_searchButton;
-    QLabel*              m_searchLabel;
-    QLineEdit*           m_inputMessage;
-    QStandardItemModel*  m_model;
-    QTreeView*           m_viewData;
-    QLabel*              m_statusMessasge;
-    
-    StreamMediaClient*   m_streamClient;
-    Player*              m_player;
-    Playlist*            m_playlist;            
-    
-    std::vector<Song*>   m_songs;
-    std::vector<Album*>  m_albums;
-    std::vector<Artist*> m_artists;            
-    
-    static Library* m_instance; 
+    QToolButton* initButton(QStyle::StandardPixmap icon, const QString & tip, QObject *dstobj, const char *slot_method, QLayout *layout);
+    void createUI(QBoxLayout *appLayout);
+    void createModel();
+
+    QToolButton* m_searchButton;
+    QLabel* m_searchLabel;
+    QLineEdit* m_inputMessage;
+    QStandardItemModel* m_model;
+    QTreeView* m_viewData;
+    QLabel* m_statusMessasge;
+
+    StreamMediaClient* m_streamClient;
+    Player* m_player;
+    Playlist* m_playlist;
+
+    std::vector<Song*> m_songs;
+    std::vector<Album*> m_albums;
+    std::vector<Artist*> m_artists;
+
+    static Library* m_instance;
 };
 
 

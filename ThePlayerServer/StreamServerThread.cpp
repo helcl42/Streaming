@@ -172,6 +172,16 @@ void StreamServerThread::ThreadProcedure() {
                 }
                 break;
             }
+            case MESSAGE_DISCONNECT:
+                Logger::getInstance()->log(m_iSocketId, "DISCONNECT MESSAGE RECEIVED", LOG_LEVEL_INFO);
+                Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);                
+                if(std::atoi(message->data) >= 0) {                    
+                    setRunning(false);
+                    Logger::getInstance()->log(m_iSocketId, "INVALIDATED", LOG_LEVEL_INFO);
+                    SAFE_DELETE(message);
+                    return;
+                }                
+                break;
             default:
             {
                 Logger::getInstance()->log(m_iSocketId, "UNKNOWN MESSAGE RECEIVED", LOG_LEVEL_FATAL);

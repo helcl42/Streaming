@@ -61,6 +61,10 @@ Song* Playlist::getPrevious() {
 
 void Playlist::insert(Song* song) {
     //std::cout << "Insert" << std::endl;
+    std::string artistName = Library::getInstance()->getArtistName(song->getId());
+    std::string albumName = Library::getInstance()->getAlbumTitle(song->getId());
+    song->setArtistName(artistName);
+    song->setAlbumName(albumName);
     m_playlist.push_back(*song);
     insertTableRow(song);
     print();

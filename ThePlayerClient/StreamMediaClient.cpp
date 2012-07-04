@@ -181,22 +181,32 @@ void StreamMediaClient::ThreadProcedure() {
     setRunning(true);
     switch (m_operation) {
         case OP_CONNECT:
-            if (connectToServer())
-                m_bConnected = true;
-            else
+            if (connectToServer()) {
+                m_bConnected = true;                
+            } else {
                 m_bConnected = false;
+            }
             break;
         case OP_QUERY:
-            if (queryLibrary())
+            if (queryLibrary()) {
                 Logger::getInstance()->log(m_pClientSocket->getSocketId(), "QUERY SUCCESSFULL.", LOG_LEVEL_INFO);
-            else
+            } else {
                 Logger::getInstance()->log(m_pClientSocket->getSocketId(), "SOMETHING WENT WRONG WHILE QUERYING", LOG_LEVEL_ERROR);
+            }
             break;
         case OP_DOWNLOAD:
-            if (downloadMedia(m_songToDownload))
+            if (downloadMedia(m_songToDownload)) {
                 Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD SUCCESSFULL.", LOG_LEVEL_INFO);
-            else
+            } else {
                 Logger::getInstance()->log(m_pClientSocket->getSocketId(), "SOMETHING WENT WRONG WHILE DOWNLOADING", LOG_LEVEL_ERROR);
+            }
+            break;
+        case OP_DISCONNECT:
+            if(disconnect()) {
+                Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DISCONNECT SUCCESSFUL.", LOG_LEVEL_INFO);
+            } else {
+                Logger::getInstance()->log(m_pClientSocket->getSocketId(), "SOMETHING WENT WRONG WHILE DISCONNECTING.", LOG_LEVEL_INFO);
+            }
             break;
         default:
             Logger::getInstance()->log(m_pClientSocket->getSocketId(), "UNKNOWN OPERATION", LOG_LEVEL_ERROR);
