@@ -39,6 +39,7 @@ public:
     
     bool isLibraryOpenned() const;
     bool isLibraryVisible() const;
+    void setLibraryOpened(bool val);
     
     Playlist*    getPlaylistInstance() const;
     Player*      getPlayerInstance() const;

@@ -39,7 +39,8 @@ public:
     void connectToServer(std::string url, int port);
     void downloadCallback(bool succes);
     void searchCallback(bool success);
-
+    void disconnectCallback(bool res);
+    
     void enableSearch(bool val);
     void printQueryResutl();
     void clearData();

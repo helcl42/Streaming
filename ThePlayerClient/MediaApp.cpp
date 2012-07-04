@@ -75,8 +75,8 @@ void MediaApp::openFile(Song* song) {
         QString artistName;
         QString albumName;
         if (song->isFromLibrary()) {
-            artistName = QString::fromStdString(Library::getInstance()->getArtistName(song->getId()));
-            albumName = QString::fromStdString(Library::getInstance()->getAlbumTitle(song->getId()));
+            artistName = QString::fromStdString(song->getArtistName());
+            albumName = QString::fromStdString(song->getAlbumName());
         } else {
             artistName = "Player";
             albumName = "The";
@@ -244,8 +244,8 @@ void MediaApp::closeEvent(QCloseEvent* /* close */) {
 
 void MediaApp::wheelEvent(QWheelEvent *event) {
     int numDegrees = event->delta() / 8;
-    double numSteps = numDegrees / 7.5f;     
-    if (m_player->getVolume() > 0 ) {
+    double numSteps = numDegrees / 7.5f;
+    if (m_player->getVolume() > 0) {
         m_volumeSlider->moveSlider(m_player->getVolume() + numSteps);
     }
 }
@@ -269,7 +269,9 @@ void MediaApp::keyPressEvent(QKeyEvent *event) {
             openFile(m_playlist->getNext());
             break;
         case Qt::Key_Up:
-            m_volumeSlider->moveSlider(m_player->getVolume() + 2);
+            if (m_player->getVolume() < 10) {
+                m_volumeSlider->moveSlider(m_player->getVolume() + 2);
+            }
             break;
         case Qt::Key_Down:
             if (m_player->getVolume() > 0) {
@@ -367,6 +369,10 @@ void MediaApp::createUI(QBoxLayout *mainLayout) {
 
 bool MediaApp::isLibraryOpenned() const {
     return m_libraryOpened;
+}
+
+void MediaApp::setLibraryOpened(bool val) {
+    m_libraryOpened = val;
 }
 
 Playlist* MediaApp::getPlaylistInstance() const {

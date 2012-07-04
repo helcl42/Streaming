@@ -20,11 +20,12 @@ Library::Library() : QWidget() {
     m_model = new QStandardItemModel();
 
     m_viewData->setModel(m_model);
-
+    m_viewData->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    
     QItemSelectionModel *selectionModel = m_viewData->selectionModel();
     connect(selectionModel, SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(selectFromTree(const QItemSelection &, const QItemSelection &)));
-
+            this, SLOT(selectFromTree(const QItemSelection &, const QItemSelection &)));    
+    
     vLayout->addWidget(m_viewData);
     vLayout->setContentsMargins(2, 2, 2, 2);
     createUI(vLayout);
@@ -77,7 +78,6 @@ void Library::connectToServer(std::string url, int port) {
         Logger::getInstance()->log(m_streamClient->getId(), "ALREADY CONNECTED.", LOG_LEVEL_INFO);
         return;
     }
-
     m_streamClient->setOperation(OP_CONNECT);
     m_streamClient->RunThread();
 }
@@ -271,9 +271,14 @@ void Library::setSatusMessage(std::string str) {
 }
 
 void Library::closeEvent(QCloseEvent* /* close */) {
-    if (m_streamClient->isConnected()) {
-        m_streamClient->disconnect();
+    if (m_streamClient->isConnected() && !m_streamClient->isRunning()) {
+        m_streamClient->setOperation(OP_DISCONNECT);
+        m_streamClient->RunThread();        
     }    
+}
+
+void Library::disconnectCallback(bool res) {
+    MediaApp::getInstance()->setLibraryOpened(res);
 }
 
 void Library::clearData() {

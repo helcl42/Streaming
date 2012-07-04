@@ -14,10 +14,10 @@ CoverDownloader::~CoverDownloader() {
 }
 
 void CoverDownloader::downloadCover() {    
-    if (!isRunning()) {
-        Logger::getInstance()->log(0, "DOWNLOAD THREAD NOT RUNNING", LOG_LEVEL_INFO);
+    if (!isRunning()) {        
         start(LowPriority);
     } else {
+        Logger::getInstance()->log("DOWNLOAD THREAD IS ALREADY RUNNING", LOG_LEVEL_ERROR);
         m_condition.wakeOne();
     }
 }
@@ -78,9 +78,9 @@ void CoverDownloader::download() {
     std::string req = "GET /2.0/?method=album.getinfo&api_key=";
     req += API_KEY;
     req += "&artist=";
-    req += albumTitle;
-    req += "&album=";
     req += artistName;
+    req += "&album=";
+    req += albumTitle;
     req += " HTTP/1.1\r\nHost: ws.audioscrobbler.com\r\n\r\n";
 
     std::cout << "REQUEST: " << req << std::endl;

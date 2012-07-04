@@ -21,32 +21,32 @@
 
 #define BUFFSIZE 1024
 
-
 class Library;
 
-class StreamClient : public Thread {        
+class StreamClient : public Thread {
 protected:
     int              m_iId;
     bool             m_bConnected;
-    TCPClientSocket* m_pClientSocket;    
-    
+    TCPClientSocket* m_pClientSocket;
+
     void setId(int id);
 
-public:            
+public:
     StreamClient(std::string host, int port);
     StreamClient(const char* hostname, int port);
     ~StreamClient();
 
-    bool     connectToServer();
-    bool     disconnect();
+    bool connectToServer();
+    bool disconnect();
+
+    void  sendRawData(char* data, int length);
+    char* receiveRawData();
     
-    void     sendRawData(char* data, int length);
-    char*    receiveRawData();
     bool     sendMessage(Message* message);
-    Message* receiveMessage();        
-            
-    int  getId() const;
-    
+    Message* receiveMessage();
+
+    int getId() const;
+
     bool isConnected() const;
     void setConnected(bool conn);
 };

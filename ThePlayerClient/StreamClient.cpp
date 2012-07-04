@@ -177,17 +177,20 @@ bool StreamClient::connectToServer() {
     }
 }
 
-bool StreamClient::disconnect() {
+bool StreamClient::disconnect() {        
     Message* message = new Message();
     message->type = MESSAGE_DISCONNECT;
     sprintf(message->data, "%d", m_iId);
     message->dataSize = 1;
     if (!sendMessage(message)) {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "COULD NOT SEND DISCONNECT MESSAGE", LOG_LEVEL_INFO);
-        SAFE_DELETE(message);
+        Library::getInstance()->disconnectCallback(false);
+        SAFE_DELETE(message);        
         return false;
     }
     m_pClientSocket->closeSocket();
+    setConnected(false);
+    Library::getInstance()->disconnectCallback(true);
     SAFE_DELETE(message);
     return true;
 }

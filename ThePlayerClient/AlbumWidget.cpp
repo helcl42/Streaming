@@ -66,7 +66,7 @@ void AlbumWidget::LoadImage(QString album, QString artist) {
         std::cout << "Dir cache hit" << std::endl;
         cache(name, img);
     } else {
-        fromInternet(artist, album);
+        fromInternet(album, artist);
         std::cout << "Internet" << std::endl;
         return;
     }
