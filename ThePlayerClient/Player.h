@@ -30,6 +30,7 @@ public:
     int         getVolume() const;
 
     QTime       getLength() const;
+    //QTime       findOutMediaLength(Song* media) const;
     QGst::State getState() const;
 
 public Q_SLOTS:

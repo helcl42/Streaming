@@ -15,7 +15,7 @@
 Player::Player(QWidget *parent) : QGst::Ui::VideoWidget(parent) {
     //this timer is used to tell the ui to change its position slider & label
     //every 100 ms, but only when the pipeline is playing
-    connect(&m_positionTimer, SIGNAL(timeout()), this, SIGNAL(positionChanged()));    
+    connect(&m_positionTimer, SIGNAL(timeout()), this, SIGNAL(positionChanged()));
 }
 
 Player::~Player() {
@@ -70,8 +70,7 @@ void Player::setPosition(const QTime & pos) {
     QGst::SeekEventPtr evt = QGst::SeekEvent::create(
             1.0, QGst::FormatTime, QGst::SeekFlagFlush,
             QGst::SeekTypeSet, QGst::ClockTime::fromTime(pos),
-            QGst::SeekTypeNone, QGst::ClockTime::None
-            );
+            QGst::SeekTypeNone, QGst::ClockTime::None);
 
     m_pipeline->sendEvent(evt);
 }
@@ -109,7 +108,23 @@ QTime Player::getLength() const {
         return QTime();
     }
 }
-
+/*
+QTime Player::findOutMediaLength(Song* media) const {
+    
+    QString uri = QString::fromStdString(media->getUrl());
+    
+    if(uri.indexOf("://") < 0) {
+        uri = QUrl::fromLocalFile(uri).toEncoded();
+    }
+    
+    QGst::PipelinePtr pipeline = QGst::ElementFactory::make("playbin2").dynamicCast<QGst::Pipeline > ();
+    pipeline->setProperty("uri", uri);
+    QGst::DurationQueryPtr query = QGst::DurationQuery::create(QGst::FormatTime);
+    pipeline->query(query);
+    
+    return QGst::ClockTime(query->duration()).toTime();
+}
+**/        
 QGst::State Player::getState() const {
     return m_pipeline ? m_pipeline->currentState() : QGst::StateNull;
 }

@@ -25,9 +25,10 @@ class CoverDownloader : public QThread {
     
 private:    
     QWaitCondition m_condition;
+    bool           m_isRunning;
     
-    std::string m_artist;
-    std::string m_albumName;   
+    std::string    m_artist;
+    std::string    m_albumName;   
 
     static std::string escapeStrings(std::string in);
 
@@ -50,6 +51,9 @@ public:
     QImage* getImage(QString name);
 
     void downloadCover();
+    
+    void setRunning(bool val);
+    bool isRunning() const;
     
 signals:
      void renderedImage(const QImage& image);

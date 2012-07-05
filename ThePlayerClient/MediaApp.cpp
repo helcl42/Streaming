@@ -71,6 +71,8 @@ void MediaApp::openFile(Song* song) {
     m_player->setUri(QString::fromStdString(song->getUrl()));
     m_player->play();
 
+    //    std::cout << "LENGTH: " << m_player->findOutMediaLength(song).toString("hh:mm:ss").toStdString() << std::endl;
+
     if (song->isAudio()) {
         QString artistName;
         QString albumName;
@@ -115,7 +117,8 @@ void MediaApp::open() {
 
 void MediaApp::openLibrary() {
     if (!m_libraryOpened) {
-        Library::getInstance()->connectToServer("127.0.0.1", 12345);
+        //Library::getInstance()->connectToServer("127.0.0.1", 12345);
+        Library::getInstance()->connectToServer("ec2-23-21-7-252.compute-1.amazonaws.com", 12345);
         Library::getInstance()->setVisible(true);
         Library::getInstance()->setSatusMessage("Connecting");
         Library::getInstance()->enableSearch(false);
@@ -142,12 +145,16 @@ void MediaApp::openLibraryCallback(bool connected) {
 
 void MediaApp::next() {
     Song* nextSong = m_playlist->getNext();
-    openFile(nextSong);
+    if (nextSong != NULL) {
+        openFile(nextSong);
+    }
 }
 
 void MediaApp::prev() {
     Song* prevSong = m_playlist->getPrevious();
-    openFile(prevSong);
+    if (prevSong != NULL) {
+        openFile(prevSong);
+    }
 }
 
 void MediaApp::toggleFullScreen() {
@@ -259,6 +266,9 @@ void MediaApp::keyPressEvent(QKeyEvent *event) {
             } else {
                 m_player->play();
             }
+            break;
+        case Qt::Key_O:
+            open();
             break;
         case Qt::Key_Left:
             m_playlist->setFocus();

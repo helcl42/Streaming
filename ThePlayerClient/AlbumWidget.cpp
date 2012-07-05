@@ -113,9 +113,13 @@ QImage* AlbumWidget::fromDirCache(QString name) {
 }
 
 void AlbumWidget::fromInternet(QString artist, QString album) {
-    m_cd.setAlbum(album.toStdString());
-    m_cd.setArtist(artist.toStdString());
-    m_cd.downloadCover();
+    if (!m_cd.isRunning()) {
+        m_cd.setAlbum(album.toStdString());
+        m_cd.setArtist(artist.toStdString());
+        m_cd.downloadCover();
+    } else {
+        Logger::getInstance()->log("COVER DOWNLOAD HAS BEEN ALREADY STARTED", LOG_LEVEL_ERROR);
+    }
 }
 
 void AlbumWidget::cache(QString name, QImage* img) {

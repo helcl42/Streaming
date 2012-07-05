@@ -16,10 +16,10 @@ CoverDownloader::~CoverDownloader() {
 void CoverDownloader::downloadCover() {    
     if (!isRunning()) {        
         start(LowPriority);
-    } else {
-        Logger::getInstance()->log("DOWNLOAD THREAD IS ALREADY RUNNING", LOG_LEVEL_ERROR);
+    } else {        
         m_condition.wakeOne();
     }
+    setRunning(true);
 }
 
 QImage* CoverDownloader::getImage(QString name) {
@@ -47,6 +47,7 @@ QImage* CoverDownloader::getImage(QString name) {
 
 void CoverDownloader::run() {    
     download();           
+    setRunning(false);
 }
 
 std::string CoverDownloader::escapeStrings(std::string in) {
@@ -164,4 +165,12 @@ std::string CoverDownloader::getArtist() const {
 
 void CoverDownloader::setArtist(std::string art) {
     m_artist = art;
+}
+
+void CoverDownloader::setRunning(bool val) {
+    m_isRunning = val;    
+}
+
+bool CoverDownloader::isRunning() const {
+    return m_isRunning;
 }

@@ -19,8 +19,8 @@ typedef enum {
 
 class StreamMediaClient : public StreamClient {
 private:
-    Song* m_songToDownload;
-    Operation m_operation;
+    Song*       m_songToDownload;
+    Operation   m_operation;
     std::string m_queryString;
 
 protected:
@@ -39,13 +39,14 @@ public:
     bool queryLibrary();
     bool receiveQueryResult();
 
-    void setDownloadSong(Song* song);
-    Song* getDownloadSong() const;
+    // accessors
+    void        setDownloadSong(Song* song);
+    Song*       getDownloadSong() const;
 
-    void setOperation(Operation op);
-    Operation getOperation() const;
+    void        setOperation(Operation op);
+    Operation   getOperation() const;
 
-    void setQueryString(std::string str);
+    void        setQueryString(std::string str);
     std::string getQueryString() const;
 };
 
