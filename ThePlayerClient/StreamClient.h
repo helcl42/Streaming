@@ -1,6 +1,7 @@
 /* 
- * File:   StreamClient.h
- * Author: lubos
+ * File:    StreamClient.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 11, 2012, 1:13 PM
  */

@@ -1,6 +1,7 @@
 /* 
- * File:   HttpClientSocket.h
- * Author: lubos
+ * File:    HttpClientSocket.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 23, 2012, 3:27 PM
  */

@@ -108,6 +108,7 @@ QTime Player::getLength() const {
         return QTime();
     }
 }
+
 /*
 QTime Player::findOutMediaLength(Song* media) const {
     
@@ -115,16 +116,25 @@ QTime Player::findOutMediaLength(Song* media) const {
     
     if(uri.indexOf("://") < 0) {
         uri = QUrl::fromLocalFile(uri).toEncoded();
+    }    
+    
+    QGst::PipelinePtr pipeline = QGst::ElementFactory::make("playbin2").dynamicCast<QGst::Pipeline > ();   
+    if(!pipeline) {
+        std::cout << "PIPELINE NULLLLLL !!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+    } else {
+        std::cout << "NO MELO jet" << std::endl;
     }
     
-    QGst::PipelinePtr pipeline = QGst::ElementFactory::make("playbin2").dynamicCast<QGst::Pipeline > ();
-    pipeline->setProperty("uri", uri);
+    pipeline->setProperty("uri", uri);    
+    pipeline->setState(QGst::StatePlaying);
+    //pipeline->setState(QGst::StateNull);
     QGst::DurationQueryPtr query = QGst::DurationQuery::create(QGst::FormatTime);
-    pipeline->query(query);
+    pipeline->query(query);        
     
     return QGst::ClockTime(query->duration()).toTime();
 }
-**/        
+*/
+ 
 QGst::State Player::getState() const {
     return m_pipeline ? m_pipeline->currentState() : QGst::StateNull;
 }

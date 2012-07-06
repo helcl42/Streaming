@@ -1,6 +1,7 @@
 /* 
- * File:   Playlist.h
- * Author: lubos
+ * File:    Playlist.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 18, 2012, 2:44 PM
  */

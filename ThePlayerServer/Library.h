@@ -1,6 +1,7 @@
 /* 
- * File:   Library.h
- * Author: lubos
+ * File:    Library.h
+ * Project: ThePlayerServer
+ * Author:  lubos
  *
  * Created on June 20, 2012, 4:55 PM
  */

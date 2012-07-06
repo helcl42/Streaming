@@ -1,6 +1,7 @@
 /* 
- * File:   CleanUpThread.h
- * Author: lubos
+ * File:    CleanUpThread.h
+ * project: ThePlayerServer
+ * Author:  lubos
  *
  * Created on June 18, 2012, 2:08 AM
  */

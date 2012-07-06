@@ -1,6 +1,7 @@
 /* 
- * File:   Types.h
- * Author: lubos
+ * File:    Types.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 18, 2012, 2:42 PM
  */

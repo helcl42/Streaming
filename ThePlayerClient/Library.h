@@ -1,6 +1,7 @@
 /* 
- * File:   ClientLibrary.h
- * Author: lubos
+ * File:    ClientLibrary.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 18, 2012, 2:39 PM
  */
@@ -53,8 +54,7 @@ public:
 protected:
     void closeEvent(QCloseEvent* close);
 
-    private 
-Q_SLOTS:
+private Q_SLOTS:
     void search();
     void selectFromTree(const QItemSelection&, const QItemSelection&);
     void download(Song* song);
@@ -67,22 +67,22 @@ private:
     void createUI(QBoxLayout *appLayout);
     void createModel();
 
-    QToolButton* m_searchButton;
-    QLabel* m_searchLabel;
-    QLineEdit* m_inputMessage;
-    QStandardItemModel* m_model;
-    QTreeView* m_viewData;
-    QLabel* m_statusMessasge;
+    QToolButton*         m_searchButton;
+    QLabel*              m_searchLabel;
+    QLineEdit*           m_inputMessage;
+    QStandardItemModel*  m_model;
+    QTreeView*           m_viewData;
+    QLabel*              m_statusMessasge;
 
-    StreamMediaClient* m_streamClient;
-    Player* m_player;
-    Playlist* m_playlist;
+    StreamMediaClient*   m_streamClient;
+    Player*              m_player;
+    Playlist*            m_playlist;
 
-    std::vector<Song*> m_songs;
-    std::vector<Album*> m_albums;
+    std::vector<Song*>   m_songs;
+    std::vector<Album*>  m_albums;
     std::vector<Artist*> m_artists;
 
-    static Library* m_instance;
+    static Library*      m_instance;
 };
 
 

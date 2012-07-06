@@ -94,21 +94,8 @@ std::string Logger::getTime() {
     timeinfo = localtime(&rawtime);
     
     std::string time(asctime(timeinfo));
-    deleteNewLines(time);
+    Util::deleteNewLines(time);
     return time;
 }
-
-void Logger::deleteNewLines(std::string& s) {
-    int n = 0;
-    for (unsigned int i = 0; i < s.length(); i++) {
-        if (s[i] == '\n') {
-            n++;
-        } else {
-            s[i - n] = s[i];
-        }
-    }
-    s.resize(s.length() - n);
-}
-
 
 

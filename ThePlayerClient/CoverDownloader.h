@@ -1,6 +1,7 @@
 /* 
- * File:   CoverDowloader.h
- * Author: lubos
+ * File:    CoverDowloader.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 22, 2012, 3:07 PM
  */
@@ -55,7 +56,7 @@ public:
     void setRunning(bool val);
     bool isRunning() const;
     
-signals:
+Q_SIGNALS:
      void renderedImage(const QImage& image);
 };
 

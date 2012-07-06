@@ -1,6 +1,7 @@
 /* 
- * File:   Message.h
- * Author: lubos
+ * File:    Message.h
+ * Project: ThePlayerServer
+ * Author:  lubos
  *
  * Created on June 11, 2012, 1:11 PM
  */

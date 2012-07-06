@@ -30,8 +30,7 @@ char* StreamServerThread::receiveRawData() {
     int partSize = 0;
     int dataLength = 0;
 
-    while (true) {
-        tmpByte = 0;
+    while (true) {        
         partSize = read(m_iSocketId, static_cast<char*> (&tmpByte), 1);
 
         if (partSize < 0) {
@@ -60,9 +59,9 @@ char* StreamServerThread::receiveRawData() {
 }
 
 Message* StreamServerThread::receiveMessage() {
-    int partSize = 0;
-    int dataLength = sizeof (Message);
+    int partSize = 0;    
     int shift = 0;
+    int dataLength = sizeof (Message);
 
     char byteMessage[dataLength];
     char* dataIndex = byteMessage;

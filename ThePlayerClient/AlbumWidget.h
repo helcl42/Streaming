@@ -1,6 +1,7 @@
 /* 
- * File:   AlbumWidget.h
- * Author: lubos
+ * File:    AlbumWidget.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 24, 2012, 6:28 PM
  */
@@ -28,8 +29,8 @@ private:
     void    fromInternet(QString artist, QString album);
 
     void cache(QString name, QImage* img);
-
-private slots:
+    
+private Q_SLOTS:
     void updatePixmap(const QImage& image);
 
 protected:

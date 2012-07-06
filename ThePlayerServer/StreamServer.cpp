@@ -61,3 +61,22 @@ void StreamServer::shutdown() {
     m_pServerSocket->closeSocket();
 }
 
+StreamServerThread** StreamServer::getThreadArray() const {
+    return m_pThreads;
+}
+
+void StreamServer::setThreadArray(StreamServerThread** array) {
+    m_pThreads = array;
+}
+
+int StreamServer::getThreadCount() const {
+    return m_iThreadCount;
+}
+
+void StreamServer::setThreadCount(int count) {
+    m_iThreadCount = count;
+}
+
+TCPServerSocket* StreamServer::getServerSocket() const {
+    return m_pServerSocket;
+}

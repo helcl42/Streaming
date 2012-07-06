@@ -1,6 +1,7 @@
 /* 
- * File:   StreamServer.h
- * Author: lubos
+ * File:    StreamServer.h
+ * Project: ThePlayerServer
+ * Author:  lubos
  *
  * Created on May 17, 2012, 11:38 PM
  */
@@ -21,20 +22,18 @@
 
 #define DEBUG
 
-
 class StreamServer {
+private:
+    friend class CleanUpThread;
+    
+    StreamServer(const StreamServer& ss);
+    StreamServer& operator=(const StreamServer& ss) { return *this; }
+    
 protected:
     TCPServerSocket*     m_pServerSocket;
     CleanUpThread*       m_pCleaner;
     StreamServerThread** m_pThreads;
     int                  m_iThreadCount;
-
-private:    
-    friend class CleanUpThread;
-    StreamServer(const StreamServer& ss);
-    StreamServer& operator=(const StreamServer& ss) {
-        return *this;
-    };
 
     void reallocThreads();
 
@@ -43,7 +42,14 @@ public:
     ~StreamServer();
 
     void shutdown();
-    void startServer();   
+    void startServer();
+
+    StreamServerThread** getThreadArray() const;
+    void                 setThreadArray(StreamServerThread** array);
+    int                  getThreadCount() const;
+    void                 setThreadCount(int count);
+
+    TCPServerSocket*     getServerSocket() const;
 };
 
 #endif	/* STREAMSERVER_H */

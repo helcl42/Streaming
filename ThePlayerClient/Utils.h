@@ -1,6 +1,7 @@
 /* 
- * File:   Utils.h
- * Author: lubos
+ * File:    Utils.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 11, 2012, 1:43 PM
  */
@@ -31,6 +32,19 @@ public:
         std::vector<std::string> elems;
         return split(s, delim, elems);
     }
+
+    static void deleteNewLines(std::string& s) {
+        int n = 0;
+        for (unsigned int i = 0; i < s.length(); i++) {
+            if (s[i] == '\n') {
+                n++;
+            } else {
+                s[i - n] = s[i];
+            }
+        }
+        s.resize(s.length() - n);
+    }
+
 };
 
 #endif	/* UTILS_H */

@@ -1,6 +1,7 @@
 /* 
- * File:   TCPClientSocket.h
- * Author: lubos
+ * File:    TCPClientSocket.h
+ * Project: ThePlayerServer
+ * Author:  lubos
  *
  * Created on May 18, 2012, 2:41 AM
  */

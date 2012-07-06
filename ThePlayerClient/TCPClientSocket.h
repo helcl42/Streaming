@@ -1,6 +1,7 @@
 /* 
- * File:   TCPClientSocket.h
- * Author: lubos
+ * File:    TCPClientSocket.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 11, 2012, 1:44 PM
  */
@@ -33,7 +34,7 @@ public:
     ~TCPClientSocket();
 
     bool connectSocket();
-    int getSocketId() const;
+    int  getSocketId() const;
     void closeSocket();
 };
 

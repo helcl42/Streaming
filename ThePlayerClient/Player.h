@@ -1,6 +1,7 @@
 /* 
- * File:   Player.h
- * Author: lubos
+ * File:    Player.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 18, 2012, 1:41 PM
  */
@@ -30,7 +31,7 @@ public:
     int         getVolume() const;
 
     QTime       getLength() const;
-    //QTime       findOutMediaLength(Song* media) const;
+//  QTime       findOutMediaLength(Song* media) const;
     QGst::State getState() const;
 
 public Q_SLOTS:

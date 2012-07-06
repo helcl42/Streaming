@@ -58,16 +58,16 @@ void AlbumWidget::paintEvent(QPaintEvent *) {
 
 void AlbumWidget::LoadImage(QString album, QString artist) {
     QString name = artist + "_" + album;
-    QImage* img = NULL;
-
-    if ((img = fromCache(name))) {
-        std::cout << "Cache hit" << std::endl;
+    QImage* img = NULL;   
+    
+    if ((img = fromCache(name))) {        
+        Logger::getInstance()->log("CACHE HIT", LOG_LEVEL_INFO);
     } else if ((img = fromDirCache(name))) {
-        std::cout << "Dir cache hit" << std::endl;
+        Logger::getInstance()->log("DIRECTORY CACHE HIT", LOG_LEVEL_INFO);
         cache(name, img);
     } else {
         fromInternet(album, artist);
-        std::cout << "Internet" << std::endl;
+        Logger::getInstance()->log("FROM LAST.FM", LOG_LEVEL_INFO);
         return;
     }
 
@@ -77,7 +77,7 @@ void AlbumWidget::LoadImage(QString album, QString artist) {
         update();
     } else {
         resize(300, 300);
-        std::cout << "NULL" << std::endl;
+        Logger::getInstance()->log("NO COVER AVAILABLE", LOG_LEVEL_INFO);
     }
 }
 
@@ -91,8 +91,7 @@ QImage* AlbumWidget::fromCache(QString name) {
 
 QImage* AlbumWidget::fromDirCache(QString name) {
     QDir d = QDir::current();
-
-    std::cout << "Current dir " << d.absolutePath().toStdString() << std::endl;
+   
     if (d.cd("cache")) {
         QImage * img = new QImage();
         QStringList filters;

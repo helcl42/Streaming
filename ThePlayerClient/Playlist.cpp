@@ -115,8 +115,7 @@ void Playlist::insertTableRow(Song* song) {
     QTableWidgetItem* nameItem = new QTableWidgetItem();
     nameItem->setText(QString::fromStdString(song->getTitle()));
     QTableWidgetItem* lengthItem = new QTableWidgetItem();
-    //TODO
-    //lengthItem->setText(QString::fromStdString(song->getLength()));
+    //TODO            
     lengthItem->setText("--:--");
     insertRow(row);
     setItem(row, 0, nameItem);

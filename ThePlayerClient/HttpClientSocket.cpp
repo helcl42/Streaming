@@ -1,15 +1,33 @@
 #include "HttpClientSocket.h"
 
-
+/**
+ * constructor
+ * @param host
+ * @param port
+ */
 HttpClientSocket::HttpClientSocket(const char* host, int port) : TCPClientSocket(host, port) {
 }
 
+/**
+ * constructor
+ * @param host
+ * @param port
+ */
 HttpClientSocket::HttpClientSocket(std::string host, int port) : TCPClientSocket(host.c_str(), port) {
 }
 
+/**
+ * destructor
+ */
 HttpClientSocket::~HttpClientSocket() {
 }
 
+/**
+ * function sends request from parameter to member
+ * socket of superclass TCPClientSocket
+ * @param request
+ * @return bool
+ */
 bool HttpClientSocket::sendRequest(std::string request) {
     int sendDataLength = 0;
     int shift = 0;
@@ -31,6 +49,10 @@ bool HttpClientSocket::sendRequest(std::string request) {
     return true;
 }
 
+/**
+ * function returns response (header + content) as string
+ * @return std::string
+ */
 std::string HttpClientSocket::getResponse() {
     int dataLength = RESPONSE_SIZE;
     int partSize = 0;    
@@ -53,8 +75,8 @@ std::string HttpClientSocket::getResponse() {
 }
 
 /**
- * method skips header
- * @return Content-Length attribute value
+ * method skips header and returns Content-Length attribute value
+ * @return unsigned int
  */
 unsigned int HttpClientSocket::getContentSize() {
     int partSize = 0;
@@ -105,12 +127,17 @@ unsigned int HttpClientSocket::getContentSize() {
     return 0;
 }
 
+/**
+ * function saves response content to path location
+ * @param path
+ * @return bool
+ */
 bool HttpClientSocket::saveResponseContent(std::string path) {
     //skip header first
     unsigned int contentLength = getContentSize();
     
     std::cout << "CONTENT SIZE: " << contentLength << std::endl;
-    if (contentLength > 0) {
+    if (contentLength > 20) { //some "random" value to check if it is not just some number
         char data[BUFFSIZE];
         int partSize = 0;
         
@@ -130,6 +157,11 @@ bool HttpClientSocket::saveResponseContent(std::string path) {
     }
 }
 
+/**
+ * function parses host url from whole URL
+ * @param url
+ * @return std::string
+ */
 std::string HttpClientSocket::getHostFromUrl(std::string url) {
     std::string host;
     for (unsigned int i = 0, count = 0; i < url.size(); i++) {
@@ -145,6 +177,11 @@ std::string HttpClientSocket::getHostFromUrl(std::string url) {
     return host;
 }
 
+/**
+ * function parses Server path from whole URL
+ * @param url
+ * @return std::string
+ */
 std::string HttpClientSocket::getServerPathFromUrl(std::string url) {
     std::string serverPath;    
     for (unsigned int i = 0, count = 0; i < url.size(); i++) {

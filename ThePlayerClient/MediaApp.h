@@ -1,6 +1,7 @@
 /* 
- * File:   MediaApp.h
- * Author: lubos
+ * File:    MediaApp.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 18, 2012, 1:40 PM
  */
@@ -27,6 +28,10 @@ class QSlider;
 class QToolButton;
 class QTimer;
 
+/**
+ * MediaApp singleton class represents main 
+ * container for all controls and playlist
+ */
 class MediaApp : public QWidget
 {
     Q_OBJECT    

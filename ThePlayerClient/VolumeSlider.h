@@ -1,6 +1,7 @@
 /* 
- * File:   VolumeSlider.h
- * Author: lubos
+ * File:    VolumeSlider.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on July 3, 2012, 7:32 PM
  */
@@ -11,6 +12,10 @@
 #include <QtGui/QSlider>
 #include <iostream>
 
+/**
+ * class derives from QSlider to make work
+ * volume settings by arrows key press
+ */
 class VolumeSlider : public QSlider {    
 
 public: 
@@ -18,7 +23,7 @@ public:
     VolumeSlider(Qt::Orientation orientation, QWidget *parent = 0) : QSlider(orientation, parent) {}
     
     void moveSlider(int val) {        
-        emit sliderMoved(val);
+        Q_EMIT sliderMoved(val);
     }
 };
 

@@ -1,6 +1,7 @@
 /* 
- * File:   Logger.h
- * Author: lubos
+ * File:    Logger.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 11, 2012, 1:06 PM
  */
@@ -44,8 +45,7 @@ public:
     void logData(int socket, const char* data, int size, LogType level = LOG_LEVEL_DATA);
 
     std::string createMessage(int socket, const std::string msg, LogType level);
-    std::string getTime();
-    void        deleteNewLines(std::string& s);
+    std::string getTime();    
 };
 
 #endif	/* LOGGER_H */

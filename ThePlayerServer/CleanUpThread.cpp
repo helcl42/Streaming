@@ -5,15 +5,15 @@ CleanUpThread::CleanUpThread(StreamServer* ins) : m_pServerInstance(ins) {
 
 void CleanUpThread::ThreadProcedure() {
     while (true) {       
-        Logger::getInstance()->log(m_pServerInstance->m_pServerSocket->getSocketId(), "RUNNING CLEANER", LOG_LEVEL_INFO);
+        Logger::getInstance()->log(m_pServerInstance->getServerSocket()->getSocketId(), "RUNNING CLEANER", LOG_LEVEL_INFO);
         clean();
         sleep(60);
     }
 }
 
 void CleanUpThread::clean() {
-    StreamServerThread** threads = m_pServerInstance->m_pThreads;
-    int threadCount = m_pServerInstance->m_iThreadCount;
+    StreamServerThread** threads = m_pServerInstance->getThreadArray();
+    int threadCount = m_pServerInstance->getThreadCount();
     int tmpCount = 0;
 
     for (int i = 0; i < threadCount; i++) {
@@ -27,8 +27,8 @@ void CleanUpThread::clean() {
 }
 
 void CleanUpThread::shringThreadArray(int toDelete) {
-    StreamServerThread** threads = m_pServerInstance->m_pThreads;
-    int threadCount = m_pServerInstance->m_iThreadCount;
+    StreamServerThread** threads = m_pServerInstance->getThreadArray();
+    int threadCount = m_pServerInstance->getThreadCount();
 
     int newSize = threadCount - toDelete;
     StreamServerThread** newThreads = new StreamServerThread*[newSize];
@@ -39,7 +39,7 @@ void CleanUpThread::shringThreadArray(int toDelete) {
         }
     }
 
-    m_pServerInstance->m_iThreadCount = newSize;
-    m_pServerInstance->m_pThreads = newThreads;
+    m_pServerInstance->setThreadCount(newSize);
+    m_pServerInstance->setThreadArray(newThreads);
     printf("Now living threads: %d\n", newSize);
 }

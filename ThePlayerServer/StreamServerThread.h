@@ -1,6 +1,7 @@
 /* 
- * File:   StreamServerThread.h
- * Author: lubos
+ * File:    StreamServerThread.h
+ * Project: ThePlayerServer
+ * Author:  lubos
  *
  * Created on May 17, 2012, 11:39 PM
  */

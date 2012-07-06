@@ -1,6 +1,7 @@
 /* 
- * File:   Thread.h
- * Author: lubos
+ * File:    Thread.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on May 17, 2012, 11:40 PM
  */

@@ -1,6 +1,7 @@
 /* 
- * File:   Message.h
- * Author: lubos
+ * File:    Message.h
+ * Project: ThePlayerClient
+ * Author:  lubos
  *
  * Created on June 11, 2012, 1:11 PM
  */
@@ -8,6 +9,10 @@
 #ifndef MESSAGE_H
 #define	MESSAGE_H
 
+/*
+ * enum to encapsulate all network message in equivalent
+ * order as in the server Message.h header
+ */
 typedef enum {
     MESSAGE_CONNECT = 0,
     MESSAGE_DISCONNECT,
@@ -30,8 +35,14 @@ typedef enum {
 } MessageType;
 
 
+/*
+ * to change BUFFER SIZE of message just change this macro value
+ */
 #define BUFFSIZE 1024
 
+/*
+ * struct Message is base element for communication between client and server
+ */
 struct Message {
     MessageType type;
     char        data[BUFFSIZE];

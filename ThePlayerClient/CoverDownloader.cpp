@@ -7,21 +7,39 @@
 #include "HttpClientSocket.h"
 #include "MediaApp.h"
 
+/**
+ * constructor
+ * @param parent
+ */
 CoverDownloader::CoverDownloader(QObject* parent) : QThread(parent) {
 }
 
+/**
+ * destructor
+ */
 CoverDownloader::~CoverDownloader() {
 }
 
+/**
+ * function wokrs here as entry point to 
+ * create new thread to create requests 
+ * and download album cover.
+ */
 void CoverDownloader::downloadCover() {    
     if (!isRunning()) {        
         start(LowPriority);
     } else {        
         m_condition.wakeOne();
-    }
-    setRunning(true);
+    }    
 }
 
+/**
+ * Funtion returns image pointer to Image located 
+ * in cache folder where shoul be downloaded cover 
+ * with name from parameter.
+ * @param name
+ * @return 
+ */
 QImage* CoverDownloader::getImage(QString name) {
     QDir d = QDir::current();
 
@@ -45,11 +63,22 @@ QImage* CoverDownloader::getImage(QString name) {
     return NULL;
 }
 
-void CoverDownloader::run() {    
+/**
+ * thread worker function
+ */
+void CoverDownloader::run() {  
+    setRunning(true);
     download();           
     setRunning(false);
 }
 
+/**
+ * Function replaces white spaces in not
+ * just one word names. Returns input string
+ * as valid http GET request parameter.
+ * @param in
+ * @return 
+ */
 std::string CoverDownloader::escapeStrings(std::string in) {
     std::string tmp;
 
@@ -65,6 +94,12 @@ std::string CoverDownloader::escapeStrings(std::string in) {
     return in;
 }
 
+/**
+ * function to download image form last.fm/api
+ * sends one request to obtain album info from
+ * witch parses link to image to download.
+ * Then updates Qpixmap member in AlbumWidget instance.s
+ */
 void CoverDownloader::download() {
     HttpClientSocket httpSocket("ws.audioscrobbler.com", 80);
 
@@ -121,12 +156,18 @@ void CoverDownloader::download() {
     
     QImage* image = getImage(QString::fromStdString(filename));
     if (image != NULL) {
-        emit renderedImage(*image);
+        Q_EMIT renderedImage(*image);
     } else {
         Logger::getInstance()->log(httpSocket.getSocketId(), "COULD NOT LOAD IMAGE", LOG_LEVEL_ERROR);
     }        
 }
 
+/**
+ * function for download resource 
+ * form url to path location
+ * @param url
+ * @param path
+ */
 void CoverDownloader::saveImage(std::string url, std::string path) {
     std::string host = HttpClientSocket::getHostFromUrl(url);
     std::string serverPath = HttpClientSocket::getServerPathFromUrl(url);      
@@ -151,26 +192,51 @@ void CoverDownloader::saveImage(std::string url, std::string path) {
     }
 }
 
+/**
+ * funtion returns album title
+ * @return std::string
+ */
 std::string CoverDownloader::getAlbum() const {
     return m_albumName;
 }
 
+/**
+ * function sets album title string
+ * @param std::string
+ */
 void CoverDownloader::setAlbum(std::string album) {
     m_albumName = album;
 }
 
+/**
+ * function returns artist name
+ * @return std::string
+ */
 std::string CoverDownloader::getArtist() const {
     return m_artist;
 }
 
+/**
+ * function sets artist name string
+ * @param std::string
+ */
 void CoverDownloader::setArtist(std::string art) {
     m_artist = art;
 }
 
+/**
+ * function sets thread state flag if running or not
+ * @param val
+ */
 void CoverDownloader::setRunning(bool val) {
     m_isRunning = val;    
 }
 
+/**
+ * function returns true, if download is running
+ * otherwise returns false
+ * @return bool
+ */
 bool CoverDownloader::isRunning() const {
     return m_isRunning;
 }

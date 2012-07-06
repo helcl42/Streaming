@@ -10,9 +10,15 @@
 #include <qt4/QtCore/qvariant.h>
 #include <qt4/QtGui/qlabel.h>
 
-
+/*
+ * initial settings of MediaApp instance -> singleton
+ */
 MediaApp* MediaApp::m_instance = NULL;
 
+/**
+ * public accessor to MediaApp instance
+ * @return MediaApp*
+ */
 MediaApp* MediaApp::getInstance() {
     if (!m_instance) {
         m_instance = new MediaApp();
@@ -20,6 +26,9 @@ MediaApp* MediaApp::getInstance() {
     return m_instance;
 }
 
+/**
+ * private constructor
+ */
 MediaApp::MediaApp() : QWidget(), m_libraryOpened(false) {
     m_player = new Player(this);
     m_playlist = new Playlist(this);
@@ -46,6 +55,9 @@ MediaApp::MediaApp() : QWidget(), m_libraryOpened(false) {
     resize(700, 400);
 }
 
+/**
+ * destructor
+ */
 MediaApp::~MediaApp() {
     SAFE_DELETE(m_player);
     SAFE_DELETE(m_playlist);
@@ -60,6 +72,11 @@ MediaApp::~MediaApp() {
     SAFE_DELETE(m_positionSlider);
 }
 
+/**
+ * function called everytime some file 
+ * is oppened by double click on playlist
+ * @param song
+ */
 void MediaApp::openFile(Song* song) {
     if (song == NULL) {
         return;
@@ -69,9 +86,7 @@ void MediaApp::openFile(Song* song) {
 
     m_player->stop();
     m_player->setUri(QString::fromStdString(song->getUrl()));
-    m_player->play();
-
-    //    std::cout << "LENGTH: " << m_player->findOutMediaLength(song).toString("hh:mm:ss").toStdString() << std::endl;
+    m_player->play();       
 
     if (song->isAudio()) {
         QString artistName;
@@ -85,7 +100,7 @@ void MediaApp::openFile(Song* song) {
         }
 
         m_player->repaint();
-        m_albumWidget->LoadImage(artistName, albumName);
+        m_albumWidget->LoadImage(albumName, artistName);
         m_albumWidget->setGeometry(46, 16, 300, 300);
         m_albumWidget->setVisible(true);
     } else {
@@ -94,6 +109,10 @@ void MediaApp::openFile(Song* song) {
     }
 }
 
+/**
+ * function adds to playlist any 
+ * selected files from file dialog
+ */
 void MediaApp::open() {
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open a Media"), m_baseDir);
 
@@ -115,6 +134,10 @@ void MediaApp::open() {
     }
 }
 
+/**
+ * function as slot for click on library button
+ * connects to server, if available
+ */
 void MediaApp::openLibrary() {
     if (!m_libraryOpened) {
         //Library::getInstance()->connectToServer("127.0.0.1", 12345);
@@ -133,6 +156,11 @@ void MediaApp::openLibrary() {
     }
 }
 
+/**
+ * callback called from another thread to show
+ * if connection was successful
+ * @param connected
+ */
 void MediaApp::openLibraryCallback(bool connected) {
     if (connected) {
         Library::getInstance()->enableSearch(true);
@@ -143,6 +171,9 @@ void MediaApp::openLibraryCallback(bool connected) {
     }
 }
 
+/**
+ * opens next file in playlist
+ */
 void MediaApp::next() {
     Song* nextSong = m_playlist->getNext();
     if (nextSong != NULL) {
@@ -150,6 +181,9 @@ void MediaApp::next() {
     }
 }
 
+/**
+ * opens prevous file in playlist
+ */
 void MediaApp::prev() {
     Song* prevSong = m_playlist->getPrevious();
     if (prevSong != NULL) {
@@ -157,6 +191,9 @@ void MediaApp::prev() {
     }
 }
 
+/**
+ * function changes app's view to fullscreen
+ */
 void MediaApp::toggleFullScreen() {
     if (isFullScreen()) {
         setMouseTracking(false);
@@ -172,6 +209,9 @@ void MediaApp::toggleFullScreen() {
     }
 }
 
+/**
+ * function called everytime app changes it's state
+ */
 void MediaApp::onStateChanged() {
     QGst::State newState = m_player->getState();
     m_playButton->setEnabled(newState != QGst::StatePlaying);
@@ -189,6 +229,10 @@ void MediaApp::onStateChanged() {
     }
 }
 
+/**
+ * slot function called everytime 
+ * time progress is moved by mouse
+ */
 void MediaApp::onPositionChanged() {
     QTime length(0, 0);
     QTime curpos(0, 0);
@@ -225,6 +269,11 @@ void MediaApp::setPosition(int value) {
     }
 }
 
+/**
+ * function to set visibility of controls
+ * and other widgets
+ * @param show
+ */
 void MediaApp::showControls(bool show) {
     m_openButton->setVisible(show);
     m_playButton->setVisible(show);
@@ -241,6 +290,10 @@ void MediaApp::showControls(bool show) {
     m_playlist->setVisible(show);
 }
 
+/**
+ * event handler called when app is closing down
+ * @param 
+ */
 void MediaApp::closeEvent(QCloseEvent* /* close */) {
     if (m_libraryOpened) {
         Library* lib = Library::getInstance();
@@ -249,6 +302,11 @@ void MediaApp::closeEvent(QCloseEvent* /* close */) {
     std::cout << "BYE!" << std::endl;
 }
 
+/**
+ * event handler called when mouse wheel
+ * is spinned around to change volume value
+ * @param event
+ */
 void MediaApp::wheelEvent(QWheelEvent *event) {
     int numDegrees = event->delta() / 8;
     double numSteps = numDegrees / 7.5f;
@@ -257,6 +315,19 @@ void MediaApp::wheelEvent(QWheelEvent *event) {
     }
 }
 
+/**
+ * key press handler called when any key is pressed
+ * handled are only these:
+ *      - Space:        play/pause
+ *      - O:            open file
+ *      - left_arrow:   play previous song
+ *      - right_arrow:  play next song
+ *      - up_arrow:     volume up
+ *      - down_arrow:   volume down
+ *      - delete:       to delete selected items from playlist
+ * 
+ * @param event
+ */
 void MediaApp::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
         case Qt::Key_Space:
@@ -296,12 +367,16 @@ void MediaApp::keyPressEvent(QKeyEvent *event) {
     }
 }
 
+/**
+ * function called to hide all controls
+ * and another widgets
+ */
 void MediaApp::hideControls() {
     showControls(false);
 }
 
 /**
- * hides controls in next 3s
+ * mouse move handler hides controls in next 3s
  * @param event
  */
 void MediaApp::mouseMoveEvent(QMouseEvent *event) {
@@ -309,13 +384,22 @@ void MediaApp::mouseMoveEvent(QMouseEvent *event) {
     if (isFullScreen()) {
         showControls();
         m_fullScreenTimer.start(3000);
-    }
+    }        
 }
 
+/**
+ * function that emulates button factory:)
+ * @param icon
+ * @param tip
+ * @param dstobj
+ * @param slot_method
+ * @param layout
+ * @return 
+ */
 QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & tip, QObject* dstobj, const char* slot_method, QLayout* layout) {
     QToolButton* button = new QToolButton;
     button->setIcon(style()->standardIcon(icon));
-    button->setIconSize(QSize(22, 22));
+    button->setIconSize(QSize(20, 20));
     button->setToolTip(tip);
     connect(button, SIGNAL(clicked()), dstobj, slot_method);
     layout->addWidget(button);
@@ -323,6 +407,10 @@ QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & t
     return button;
 }
 
+/**
+ * function adds and set necessary widgets to main layout
+ * @param mainLayout
+ */
 void MediaApp::createUI(QBoxLayout *mainLayout) {
     QVBoxLayout* appLayout = new QVBoxLayout;
     appLayout->setContentsMargins(0, 0, 0, 0);
@@ -377,22 +465,42 @@ void MediaApp::createUI(QBoxLayout *mainLayout) {
     mainLayout->addWidget(m_playlist);
 }
 
+/**
+ * functions returns true if library is opened
+ * @return 
+ */
 bool MediaApp::isLibraryOpenned() const {
     return m_libraryOpened;
 }
 
+/**
+ * function set library flag if its opened or not
+ * @param val
+ */
 void MediaApp::setLibraryOpened(bool val) {
     m_libraryOpened = val;
 }
 
+/**
+ * funtion returns playlist instance
+ * @return 
+ */
 Playlist* MediaApp::getPlaylistInstance() const {
     return m_playlist;
 }
 
+/**
+ * function return player instance
+ * @return 
+ */
 Player* MediaApp::getPlayerInstance() const {
     return m_player;
 }
 
+/**
+ * funtion returns AlbumWidget instance
+ * @return 
+ */
 AlbumWidget* MediaApp::getAlbumWidgetInstance() const {
     return m_albumWidget;
 }
