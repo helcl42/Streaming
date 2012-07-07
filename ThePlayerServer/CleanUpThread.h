@@ -11,12 +11,13 @@
 
 #include "Thread.h"
 #include "StreamServerThread.h"
+#include "Mutex.h"
 
 class StreamServer;
 
 class CleanUpThread : public Thread {
 private:
-    StreamServer* m_pServerInstance;
+    StreamServer* m_pServerInstance;    
 
 public:
     CleanUpThread(StreamServer* ins);    

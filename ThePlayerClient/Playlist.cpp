@@ -59,24 +59,30 @@ Song* Playlist::getPrevious() {
     }
 }
 
-void Playlist::insert(Song* song) {
-    //std::cout << "Insert" << std::endl;
+void Playlist::insert(Song* song) {    
     std::string artistName = Library::getInstance()->getArtistName(song->getId());
     std::string albumName = Library::getInstance()->getAlbumTitle(song->getId());
+    
     song->setArtistName(artistName);
     song->setAlbumName(albumName);
     m_playlist.push_back(*song);
     insertTableRow(song);
-    print();
+    //print();
 }
 
 void Playlist::insert(std::vector<Song*> & songVect) {
     std::vector<Song*>::iterator iter;
-    for (iter = songVect.begin(); iter != songVect.end(); ++iter) {
+    std::string artistName;
+    std::string albumName;
+    for (iter = songVect.begin(); iter != songVect.end(); ++iter) {        
+        artistName = Library::getInstance()->getArtistName((*iter)->getId());
+        albumName = Library::getInstance()->getAlbumTitle((*iter)->getId());
+        (*iter)->setArtistName(artistName);
+        (*iter)->setAlbumName(albumName);
         m_playlist.push_back(**iter);
         insertTableRow(*iter);
     }
-    print();
+    //print();
 }
 
 bool Playlist::isEmpty() const {
@@ -123,8 +129,7 @@ void Playlist::insertTableRow(Song* song) {
 }
 
 void Playlist::mouseDoubleClickEvent(QMouseEvent* /*event*/) {    
-    m_position = currentRow();    
-    std::cout << "Opening: " << m_playlist[m_position].getUrl() << std::endl;
+    m_position = currentRow();        
     MediaApp::getInstance()->openFile(&m_playlist[m_position]);
 }
 

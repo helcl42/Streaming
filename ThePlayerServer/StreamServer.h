@@ -19,6 +19,7 @@
 #include "StreamServerThread.h"
 #include "TCPServerSocket.h"
 #include "CleanUpThread.h"
+#include "Mutex.h"
 
 #define DEBUG
 
@@ -32,8 +33,10 @@ private:
 protected:
     TCPServerSocket*     m_pServerSocket;
     CleanUpThread*       m_pCleaner;
+    
     StreamServerThread** m_pThreads;
     int                  m_iThreadCount;
+    Mutex*               m_pArrayMutex;
 
     void reallocThreads();
 
@@ -50,6 +53,7 @@ public:
     void                 setThreadCount(int count);
 
     TCPServerSocket*     getServerSocket() const;
+    Mutex*               getArrayMutex() const;
 };
 
 #endif	/* STREAMSERVER_H */

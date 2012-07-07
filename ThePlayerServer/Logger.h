@@ -16,6 +16,7 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include "Utils.h"
+#include "Mutex.h"
 
 typedef enum {
     LOG_LEVEL_INFO = 0,
@@ -32,8 +33,7 @@ private:
     static Logger*      m_pInstance;
     std::ofstream       m_outFile;
     bool                m_bStdOutput;
-    pthread_mutexattr_t m_attr;
-    pthread_mutex_t     m_mutex;
+    Mutex               m_mutex;
 
     Logger();
 
@@ -44,6 +44,7 @@ public:
     void log(int socket, const std::string msg, LogType level = LOG_LEVEL_WARNING);
     void log(const std::string msg, LogType level = LOG_LEVEL_WARNING);
     void logData(int socket, const char* data, int size, LogType level = LOG_LEVEL_DATA);
+    void logData(const char* data, int size, LogType level = LOG_LEVEL_DATA);
 
     std::string createMessage(int socket, const std::string msg, LogType level);
     std::string getTime();    

@@ -104,7 +104,7 @@ void Library::searchCallback(bool success) {
 
 void Library::createModel() {
     m_model->clear();
-    printQueryResutl();
+    //printQueryResutl();
 
     for (std::vector<Artist*>::iterator art = m_artists.begin(); art != m_artists.end(); ++art) {
         Artist* artist = (*art);
@@ -191,7 +191,7 @@ void Library::selectFromTree(const QItemSelection &, const QItemSelection &) {
             break;
         }
         default:
-            std::cout << "Unknown type selected." << std::endl;
+            Logger::getInstance()->log(m_streamClient->getId(), "UNKNOWN TYPE SELECTED IN TREE", LOG_LEVEL_FATAL);
     }
 }
 
@@ -241,13 +241,13 @@ std::string Library::getArtistName(int songId) {
         for (std::vector<Album *>::iterator alb = (*it)->m_albums.begin(); alb != (*it)->m_albums.end(); ++alb) {
             for (std::vector<Song *>::iterator sng = (*alb)->m_songs.begin(); sng != (*alb)->m_songs.end(); ++sng) {
                 if ((*sng)->getId() == songId) {
-                    std::cout << "FOUND: " << (*it)->getName() << std::endl;
+                    //std::cout << "FOUND: " << (*it)->getName() << std::endl;
                     return (*it)->getName();
                 }
             }
         }
     }
-    std::cout << "NOT FOUND " << std::endl;
+    Logger::getInstance()->log(m_streamClient->getId(), "NOT FOUND ARTIST NAME IN LIBRARY", LOG_LEVEL_FATAL);
     return "";
 }
 
@@ -256,13 +256,13 @@ std::string Library::getAlbumTitle(int songId) {
         for (std::vector<Album *>::iterator alb = (*it)->m_albums.begin(); alb != (*it)->m_albums.end(); ++alb) {
             for (std::vector<Song *>::iterator sng = (*alb)->m_songs.begin(); sng != (*alb)->m_songs.end(); ++sng) {
                 if ((*sng)->getId() == songId) {
-                    std::cout << "FOUND ALBUM: " << (*alb)->getTitle() << std::endl;
+                    //std::cout << "FOUND ALBUM: " << (*alb)->getTitle() << std::endl;
                     return (*alb)->getTitle();
                 }
             }
         }
     }
-    std::cout << "NOT FOUND " << std::endl;
+    Logger::getInstance()->log(m_streamClient->getId(), "NOT FOUND ALBUM TITLE IN LIBRARY", LOG_LEVEL_FATAL);
     return "";
 }
 

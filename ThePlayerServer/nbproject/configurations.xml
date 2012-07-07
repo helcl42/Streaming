@@ -8,6 +8,7 @@
       <itemPath>Library.h</itemPath>
       <itemPath>Logger.h</itemPath>
       <itemPath>Message.h</itemPath>
+      <itemPath>Mutex.h</itemPath>
       <itemPath>StreamServer.h</itemPath>
       <itemPath>StreamServerThread.h</itemPath>
       <itemPath>TCPServerSocket.h</itemPath>
@@ -28,6 +29,7 @@
       <itemPath>CleanUpThread.cpp</itemPath>
       <itemPath>Library.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
+      <itemPath>Mutex.cpp</itemPath>
       <itemPath>StreamServer.cpp</itemPath>
       <itemPath>StreamServerThread.cpp</itemPath>
       <itemPath>TCPServerSocket.cpp</itemPath>

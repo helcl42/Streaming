@@ -35,7 +35,7 @@ void Player::setUri(const QString & uri) {
 
     if (!m_pipeline) {
         m_pipeline = QGst::ElementFactory::make("playbin2").dynamicCast<QGst::Pipeline > ();
-        std::cout << "Pipeline is NULL" << std::endl;
+        
         if (m_pipeline) {
             //let the video widget watch the pipeline for new video sinks
             watchPipeline(m_pipeline);

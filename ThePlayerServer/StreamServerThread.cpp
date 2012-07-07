@@ -78,8 +78,8 @@ Message* StreamServerThread::receiveMessage() {
 
     Message* message = new Message();
     memcpy(message, byteMessage, sizeof (Message));
-    printf("type: %d\n", message->type);
-    printf("DataSize: %d\n", message->dataSize);
+    //printf("type: %d\n", message->type);
+    //printf("DataSize: %d\n", message->dataSize);
     return message;
 }
 
@@ -150,8 +150,7 @@ void StreamServerThread::ThreadProcedure() {
             }
             case MESSAGE_QUERY:
             {
-                Logger::getInstance()->log(m_iSocketId, "MESSAGE QUERY RECEIVED", LOG_LEVEL_INFO);
-                Logger::getInstance()->logData(m_iSocketId, message->data, message->dataSize);
+                Logger::getInstance()->log(m_iSocketId, "MESSAGE QUERY RECEIVED", LOG_LEVEL_INFO);               
                 std::string query = std::string(message->data);
                 Message mediaMessage;
                 if (m_library->search(query)) {

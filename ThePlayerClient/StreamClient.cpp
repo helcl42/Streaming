@@ -163,7 +163,7 @@ bool StreamClient::connectToServer() {
     message = receiveMessage();
     if (message->type == MESSAGE_CONNECT) {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "CONNECT MESSAGE RECIEVED", LOG_LEVEL_INFO);
-        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
+        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);        
         setId(atoi(message->data));
         setConnected(true);
         MediaApp::getInstance()->openLibraryCallback(true);

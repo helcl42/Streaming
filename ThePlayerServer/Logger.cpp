@@ -4,9 +4,7 @@
 Logger* Logger::m_pInstance = NULL;
 
 Logger::Logger() : m_bStdOutput(STD_DEBUG) {
-    m_outFile.open("log.log");
-    pthread_mutex_init(&m_mutex, NULL);
-    pthread_mutexattr_settype(&m_attr, PTHREAD_MUTEX_RECURSIVE);
+    m_outFile.open("log.log");    
 }
 
 Logger* Logger::getInstance() {
@@ -21,7 +19,7 @@ Logger::~Logger() {
 }
 
 void Logger::log(int socket, const std::string msg, LogType level) {
-    pthread_mutex_lock(&m_mutex);
+    m_mutex.lock();
     std::string mess = createMessage(socket, msg, level);
     if (m_bStdOutput) {
         std::cout << mess << std::endl;
@@ -31,15 +29,19 @@ void Logger::log(int socket, const std::string msg, LogType level) {
     }
     m_outFile.flush();
     m_outFile << mess << std::endl;
-    pthread_mutex_unlock(&m_mutex);
+    m_mutex.unlock();
 }
 
 void Logger::log(const std::string msg, LogType level) {
     log(0, msg, level);
 }
 
+void Logger::logData(const char* data, int size, LogType level) {
+    logData(0, data, size, level);
+}
+
 void Logger::logData(int socket, const char* data, int size, LogType level) {
-    pthread_mutex_lock(&m_mutex);
+    m_mutex.lock();
     std::stringstream out;    
     out << createMessage(socket, std::string(data), level);    
     out << "\tSize: ";    
@@ -52,7 +54,7 @@ void Logger::logData(int socket, const char* data, int size, LogType level) {
         m_outFile.open("log.log");
     }    
     m_outFile << out.str() << std::endl;
-    pthread_mutex_unlock(&m_mutex);
+    m_mutex.unlock();
 }
 
 std::string Logger::createMessage(int socket, const std::string msg, LogType level) {       

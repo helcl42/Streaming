@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/StreamServer.o \
 	${OBJECTDIR}/CleanUpThread.o \
+	${OBJECTDIR}/Mutex.o \
 	${OBJECTDIR}/TCPServerSocket.o \
 	${OBJECTDIR}/StreamServerThread.o \
 	${OBJECTDIR}/Logger.o
@@ -86,6 +87,11 @@ ${OBJECTDIR}/CleanUpThread.o: CleanUpThread.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/CleanUpThread.o CleanUpThread.cpp
+
+${OBJECTDIR}/Mutex.o: Mutex.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/Mutex.o Mutex.cpp
 
 ${OBJECTDIR}/TCPServerSocket.o: TCPServerSocket.cpp 
 	${MKDIR} -p ${OBJECTDIR}

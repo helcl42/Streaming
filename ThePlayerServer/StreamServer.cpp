@@ -2,46 +2,53 @@
 
 StreamServer::StreamServer(int port) {
     m_iThreadCount = 0;
-    m_pThreads = NULL;
-
+    m_pThreads = NULL;    
     m_pServerSocket = new TCPServerSocket(port);
-    m_pCleaner = new CleanUpThread(this);
+    m_pArrayMutex = new Mutex();
+    m_pCleaner = new CleanUpThread(this);    
 }
 
-StreamServer::~StreamServer() {
+StreamServer::~StreamServer() {    
+    m_pArrayMutex->lock();
     for (int i = 0; i < m_iThreadCount; i++) {
         SAFE_DELETE(m_pThreads[i]);
     }
     SAFE_DELETE_ARRAY(m_pThreads);
+    m_pArrayMutex->unlock();   
     SAFE_DELETE(m_pCleaner);
-    SAFE_DELETE(m_pServerSocket);
+    SAFE_DELETE(m_pArrayMutex);
+    SAFE_DELETE(m_pServerSocket);    
 }
 
 void StreamServer::startServer() {
     int socketId = 0;
-
-    m_pCleaner->RunThread();
+    
     Logger::getInstance()->log(m_pServerSocket->getSocketId(), "SERVER STARTED", LOG_LEVEL_INFO);
+    m_pCleaner->RunThread();
 
     while (true) {
         if (m_pServerSocket->isOpened()) {
             socketId = m_pServerSocket->acceptSocket();
-            Logger::getInstance()->log(m_pServerSocket->getSocketId(), "Is new socketId", LOG_LEVEL_INFO);
+            Logger::getInstance()->log(m_pServerSocket->getSocketId(), "NEW CLIENT CONNECTED", LOG_LEVEL_INFO);
             reallocThreads();
             StreamServerThread* newThread = new StreamServerThread(m_iThreadCount, socketId);
+            m_pArrayMutex->lock();
             m_pThreads[m_iThreadCount - 1] = newThread;
+            m_pArrayMutex->unlock();
             newThread->setRunning(true);
             newThread->RunThread();
         } else {
-            Logger::getInstance()->log(m_pServerSocket->getSocketId(), "Socket is not openned.", LOG_LEVEL_FATAL);
+            Logger::getInstance()->log(m_pServerSocket->getSocketId(), "SOCKET IS NOT OPENED.", LOG_LEVEL_FATAL);
             exit(1);
-        }
-        Logger::getInstance()->log(m_pServerSocket->getSocketId(), "New count of clients", LOG_LEVEL_INFO);
+        }        
     }
 
-    for (int i = 0; i < m_iThreadCount; i++)
+    m_pArrayMutex->lock();
+    for (int i = 0; i < m_iThreadCount; i++) {
         m_pThreads[i]->WaitForThreadToExit();
-
+    }
+    m_pArrayMutex->unlock();
+ 
     shutdown();
 }
 
@@ -50,15 +57,18 @@ void StreamServer::reallocThreads() {
     m_iThreadCount++;
     m_pThreads = new StreamServerThread* [m_iThreadCount];
 
-    for (int i = 0; i < m_iThreadCount - 1; i++)
+    m_pArrayMutex->lock();
+    for (int i = 0; i < m_iThreadCount - 1; i++) {
         m_pThreads[i] = tmp[i];
-
+    }
+    m_pArrayMutex->unlock(); 
+    
     SAFE_DELETE_ARRAY(tmp);
 }
 
 void StreamServer::shutdown() {
     Logger::getInstance()->log(m_pServerSocket->getSocketId(), "CLOSING SERVER SOCKET", LOG_LEVEL_INFO);
-    m_pServerSocket->closeSocket();
+    m_pServerSocket->closeSocket();    
 }
 
 StreamServerThread** StreamServer::getThreadArray() const {
@@ -79,4 +89,8 @@ void StreamServer::setThreadCount(int count) {
 
 TCPServerSocket* StreamServer::getServerSocket() const {
     return m_pServerSocket;
+}
+
+Mutex* StreamServer::getArrayMutex() const {
+    return m_pArrayMutex;
 }

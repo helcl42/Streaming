@@ -11,6 +11,7 @@
       <itemPath>Logger.h</itemPath>
       <itemPath>MediaApp.h</itemPath>
       <itemPath>Message.h</itemPath>
+      <itemPath>Mutex.h</itemPath>
       <itemPath>Player.h</itemPath>
       <itemPath>Playlist.h</itemPath>
       <itemPath>StreamClient.h</itemPath>
@@ -35,6 +36,7 @@
       <itemPath>Library.cpp</itemPath>
       <itemPath>Logger.cpp</itemPath>
       <itemPath>MediaApp.cpp</itemPath>
+      <itemPath>Mutex.cpp</itemPath>
       <itemPath>Player.cpp</itemPath>
       <itemPath>Playlist.cpp</itemPath>
       <itemPath>StreamClient.cpp</itemPath>

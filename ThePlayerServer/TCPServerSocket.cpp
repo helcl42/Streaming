@@ -45,7 +45,7 @@ int TCPServerSocket::acceptSocket() {
 
     socketId = accept(m_iSocketListen, (struct sockaddr*) &m_listenAddress, (socklen_t*) & addressSize);
     if (socketId < 0) {
-        Logger::getInstance()->log(m_iSocketListen, "Accept failed.", LOG_LEVEL_FATAL);
+        Logger::getInstance()->log(m_iSocketListen, "ACCEPT FAILED.", LOG_LEVEL_FATAL);
         exit(1);
     }
     return socketId;

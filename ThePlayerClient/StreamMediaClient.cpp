@@ -23,11 +23,10 @@ bool StreamMediaClient::downloadMedia(Song* sng) {
     message->dataSize = 0;
     sendMessage(message);
     SAFE_DELETE(message);
-    message = receiveMessage();
-    int socketId = m_pClientSocket->getSocketId();
+    message = receiveMessage();    
     if (message->type == MESSAGE_DOWNLOAD) {
-        Logger::getInstance()->log(socketId, "DOWNLOAD MESSAGE RECIEVED", LOG_LEVEL_INFO);
-        Logger::getInstance()->logData(socketId, message->data, message->dataSize);        
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "DOWNLOAD MESSAGE RECIEVED", LOG_LEVEL_INFO);
+        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);             
         Song* song = Song::getSongFromString(std::string(message->data));
         song->setFromLibrary(true);
         song->setAudio(Song::findOutIfAudioMedia(song));
@@ -46,17 +45,19 @@ bool StreamMediaClient::downloadMedia(Song* sng) {
 }
 
 void StreamMediaClient::createFolderStructure(std::string newPath) {
-    std::string tmp;
+    std::string folderName;
     int status = 0;
     for (unsigned int i = 0; i < newPath.size(); i++) {
         if (newPath[i] == '/') {
-            tmp = newPath.substr(0, i);
-            std::cout << "NEW FOLDER: " << tmp << std::endl;
-            status = mkdir(tmp.c_str(), 0777);
+            folderName = newPath.substr(0, i);            
+            Logger::getInstance()->log(m_pClientSocket->getSocketId(), "NEW FOLDER", LOG_LEVEL_INFO);
+            Logger::getInstance()->logData(m_pClientSocket->getSocketId(), folderName.c_str(), LOG_LEVEL_INFO);               
+            
+            status = mkdir(folderName.c_str(), 0777);
         }
     }
     if (status == -1) {
-        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "Could not Create directory, maybe already exists.", LOG_LEVEL_ERROR);
+        Logger::getInstance()->log(m_pClientSocket->getSocketId(), "COULD NOT CREATE DIRECTORY, MAYBE ALREADY EXISTS.", LOG_LEVEL_WARNING);
     }
 }
 
@@ -75,7 +76,8 @@ void StreamMediaClient::changeSavePath(Song* song) {
     createFolderStructure(newPath);
     newPath = "/home/lubos/NetBeansProjects/ThePlayerClient/dist/Debug/GNU-Linux-x86/" + newPath;
     //newPath = "./" + newPath;
-    std::cout << "NEW PATH: " << newPath << std::endl;
+    Logger::getInstance()->log(m_pClientSocket->getSocketId(), "NEW PATH", LOG_LEVEL_INFO);
+    Logger::getInstance()->logData(m_pClientSocket->getSocketId(), newPath.c_str(), LOG_LEVEL_INFO);                        
     song->setUrl(newPath);
 }
 
@@ -125,7 +127,7 @@ bool StreamMediaClient::queryLibrary() {
     message = receiveMessage();
     if (message->type == MESSAGE_QUERY_RESULT) {
         Logger::getInstance()->log(m_pClientSocket->getSocketId(), "QUERT RESULT MESSAGE RECIEVED", LOG_LEVEL_INFO);
-        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);
+        Logger::getInstance()->logData(m_pClientSocket->getSocketId(), message->data, message->dataSize);        
         if (strncmp(message->data, "OK", 2) == 0) {
             receiveQueryResult();
         } else {

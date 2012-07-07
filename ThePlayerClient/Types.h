@@ -16,6 +16,7 @@
 #include <QtCore/QTime>
 
 #include "Utils.h"
+#include "Logger.h"
 
 class Artist;
 class Album;
@@ -137,8 +138,9 @@ public:
             song->setId(atoi(strs[0].c_str()));
             song->setTitle(strs[1]);
             song->setLength(strs[2]);
-            song->setUrl(strs[3]);
-            std::cout << "URL: " << strs[3] << std::endl;
+            song->setUrl(strs[3]);            
+            Logger::getInstance()->log("URL", LOG_LEVEL_INFO);
+            Logger::getInstance()->logData(strs[3].c_str(), LOG_LEVEL_INFO);                    
         } else {
             return NULL;
         }
@@ -149,7 +151,8 @@ public:
         if (!song->m_url.empty()) {
             unsigned int size = song->m_url.size();
             std::string fileType = song->m_url.substr(size - 4, size - 1);
-            std::cout << "TYPE: " << fileType << std::endl;
+            Logger::getInstance()->log("TYPE", LOG_LEVEL_INFO);
+            Logger::getInstance()->logData(fileType.c_str(), LOG_LEVEL_INFO);                    
 
             if (fileType.compare(".mp3") == 0) {
                 return true;

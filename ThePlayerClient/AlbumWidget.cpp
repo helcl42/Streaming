@@ -98,7 +98,7 @@ QImage* AlbumWidget::fromDirCache(QString name) {
         filters << name + ".*";
         QStringList files = d.entryList(filters, QDir::Readable | QDir::Files | QDir::NoSymLinks);
         for (QStringList::Iterator it = files.begin(); it != files.end(); ++it) {
-            std::cout << it->toStdString() << std::endl;
+            //std::cout << it->toStdString() << std::endl;            
             if (img->load("cache/" + *it)) {
                 break;
             }
