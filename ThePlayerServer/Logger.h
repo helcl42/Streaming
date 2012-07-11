@@ -1,6 +1,6 @@
 /* 
  * File:    Logger.h
- * Project: ThePlayerServer
+ * Project: ThePlayerClient
  * Author:  lubos
  *
  * Created on June 11, 2012, 1:06 PM
@@ -15,7 +15,6 @@
 #include <fstream>
 #include <sys/time.h>
 #include <pthread.h>
-#include "Utils.h"
 #include "Mutex.h"
 
 typedef enum {
@@ -33,9 +32,11 @@ private:
     static Logger*      m_pInstance;
     std::ofstream       m_outFile;
     bool                m_bStdOutput;
-    Mutex               m_mutex;
+    Mutex               m_stdMutex;
+    Mutex               m_fileMutex;
 
     Logger();
+    void writeResult(std::string message);
 
 public:
     static Logger* getInstance();

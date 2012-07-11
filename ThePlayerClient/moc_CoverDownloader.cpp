@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'CoverDownloader.h'
 **
-** Created: Sat Jul 7 22:39:23 2012
+** Created: Wed Jul 11 11:31:52 2012
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

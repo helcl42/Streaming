@@ -32,9 +32,11 @@ private:
     static Logger*      m_pInstance;
     std::ofstream       m_outFile;
     bool                m_bStdOutput;
-    Mutex               m_mutex;
+    Mutex               m_stdMutex;
+    Mutex               m_fileMutex;
 
     Logger();
+    void writeResult(std::string message);
 
 public:
     static Logger* getInstance();

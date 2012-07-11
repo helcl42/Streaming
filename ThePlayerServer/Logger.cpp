@@ -1,10 +1,11 @@
 #include "Logger.h"
 #include "Message.h"
+#include "Utils.h"
 
 Logger* Logger::m_pInstance = NULL;
 
 Logger::Logger() : m_bStdOutput(STD_DEBUG) {
-    m_outFile.open("log.log");    
+    m_outFile.open("log.log");
 }
 
 Logger* Logger::getInstance() {
@@ -19,17 +20,8 @@ Logger::~Logger() {
 }
 
 void Logger::log(int socket, const std::string msg, LogType level) {
-    m_mutex.lock();
     std::string mess = createMessage(socket, msg, level);
-    if (m_bStdOutput) {
-        std::cout << mess << std::endl;
-    }
-    if (!m_outFile.is_open()) {
-        m_outFile.open("log.log");
-    }
-    m_outFile.flush();
-    m_outFile << mess << std::endl;
-    m_mutex.unlock();
+    writeResult(mess);
 }
 
 void Logger::log(const std::string msg, LogType level) {
@@ -41,25 +33,33 @@ void Logger::logData(const char* data, int size, LogType level) {
 }
 
 void Logger::logData(int socket, const char* data, int size, LogType level) {
-    m_mutex.lock();
-    std::stringstream out;    
-    out << createMessage(socket, std::string(data), level);    
-    out << "\tSize: ";    
-    out << size;    
-    
-    if (m_bStdOutput) {
-        std::cout << out.str() << std::endl;
-    }
-    if (!m_outFile.is_open()) {
-        m_outFile.open("log.log");
-    }    
-    m_outFile << out.str() << std::endl;
-    m_mutex.unlock();
+    std::stringstream out;
+    out << createMessage(socket, std::string(data), level);
+    out << " Size: ";
+    out << size;
+
+    writeResult(out.str());
 }
 
-std::string Logger::createMessage(int socket, const std::string msg, LogType level) {       
+void Logger::writeResult(std::string message) {
+    if (m_bStdOutput) {
+        m_stdMutex.lock();
+        std::cout << message << std::endl;
+        m_stdMutex.unlock();
+    }
+
+    m_fileMutex.lock();
+    if (!m_outFile.is_open()) {
+        m_outFile.open("log.log");
+    }
+    m_outFile.flush();
+    m_outFile << message << std::endl;
+    m_fileMutex.unlock();
+}
+
+std::string Logger::createMessage(int socket, const std::string msg, LogType level) {
     std::stringstream out;
-    
+
     out << getTime();
     switch (level) {
         case LOG_LEVEL_INFO:
@@ -81,10 +81,10 @@ std::string Logger::createMessage(int socket, const std::string msg, LogType lev
             out << " [ UNKNOWN ]:\t";
             break;
     }
-    out << "Socket: ";    
-    out << socket;    
+    out << "Socket: ";
+    out << socket;
     out << "\t";
-    out << msg;    
+    out << msg;
     return out.str();
 }
 
@@ -94,10 +94,9 @@ std::string Logger::getTime() {
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    
+
     std::string time(asctime(timeinfo));
     Util::deleteNewLines(time);
     return time;
 }
-
 
